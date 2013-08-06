@@ -232,7 +232,7 @@ public class CodegenUtil {
 
     @Nullable
     public static ClassDescriptor getExpectedThisObjectForConstructorCall(
-            @NotNull ConstructorDescriptor descriptor,
+            @NotNull CallableDescriptor descriptor,
             @Nullable CalculatedClosure closure
     ) {
         //for compilation against sources
