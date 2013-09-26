@@ -2113,21 +2113,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                           ? Inliner.NOT_INLINE
                           : new InlineCodegen(this, true, state, disable, (SimpleFunctionDescriptor) callableMethod.getFunctionDescriptor());
 
-        int mask = 0;
-
-        ReceiverValue thisObject = resolvedCall.getThisObject();
-        boolean wrapClosureCall = false;/*getContext().isInlineFunction() &&
-                                  thisObject != null ? resolvedCall.getCandidateDescriptor().getName().asString()
-                                                                                 .equals("invoke") &&
-                                                       (thisObject.getType().getConstructor().getDeclarationDescriptor().getName().
-                                                               asString().startsWith("Function") || thisObject.getType().getConstructor().getDeclarationDescriptor().getName().
-                                                               asString().startsWith("ExtensionFunction"))
-                                                                       : false;*/
-
-        if (wrapClosureCall) {
-            mask = pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes(), inliner);
-        }
-
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
         }
@@ -2142,15 +2127,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             //}
         }
 
-        if (!wrapClosureCall) {
-            mask = pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes(), inliner);
-        }
+        inliner.putHiddenParams();
 
-        if (wrapClosureCall) {
-            callableMethod = new CallableMethod(Type.getObjectType("jet/InlineRuntime"), null, null,
-                                                CodegenUtil.erasedInvokeSignature(callableMethod.getFunctionDescriptor(), typeMapper, true),
-                                                INVOKESTATIC, null, null, null);
-        }
+        int mask = pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes(), inliner);
 
         if (mask == 0) {
             if (isInline) {
