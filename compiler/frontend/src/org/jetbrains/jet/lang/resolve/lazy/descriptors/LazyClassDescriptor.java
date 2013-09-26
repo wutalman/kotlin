@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.utils.WrappedValues;
 
 import java.util.*;
 
@@ -86,6 +87,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final NotNullLazyValue<JetScope> scopeForClassHeaderResolution;
     private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
     private final NotNullLazyValue<JetScope> scopeForPropertyInitializerResolution;
+
+    private final NullableLazyValue<Void> forceResolveAllContents;
 
     public LazyClassDescriptor(
             @NotNull ResolveSession resolveSession,
@@ -161,6 +164,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                 return computeScopeForPropertyInitializerResolution();
             }
         });
+        this.forceResolveAllContents = storageManager.createRecursionTolerantNullableLazyValue(new Computable<Void>() {
+            @Override
+            public Void compute() {
+                doForceResolveAllContents();
+                return null;
+            }
+        }, null);
     }
 
     @Override
@@ -353,10 +363,14 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @Override
     public void forceResolveAllContents() {
+        forceResolveAllContents.compute();
+    }
+
+    private void doForceResolveAllContents() {
         getAnnotations();
-        getClassObjectDescriptor();
+        ForceResolveUtil.forceResolveAllContents(getClassObjectDescriptor());
         getClassObjectType();
-        getConstructors();
+        ForceResolveUtil.forceResolveAllContents(getConstructors());
         getContainingDeclaration();
         getThisAsReceiverParameter();
         getKind();
@@ -397,12 +411,19 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                         }
                     }
                 },
+                new Computable<Object>() {
+                    @Override
+                    public Object compute() {
+                        return WrappedValues.unescapeExceptionOrNull(Collections.emptyList());
+                    }
+                },
                 new Consumer<Collection<JetType>>() {
                     @Override
                     public void consume(@NotNull Collection<JetType> supertypes) {
                         findAndDisconnectLoopsInTypeHierarchy(supertypes);
                     }
-                });
+                }
+        );
 
         private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = resolveSession.getStorageManager().createLazyValue(new Computable<List<TypeParameterDescriptor>>() {
             @Override
@@ -418,6 +439,15 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                 return parameters;
             }
         });
+
+        private final NullableLazyValue<Void> forceResolveAllContents =
+                resolveSession.getStorageManager().createRecursionTolerantNullableLazyValue(new Computable<Void>() {
+                    @Override
+                    public Void compute() {
+                        doForceResolveAllContents();
+                        return null;
+                    }
+                }, null);
 
         @NotNull
         @Override
@@ -481,9 +511,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
         @Override
         public void forceResolveAllContents() {
+            forceResolveAllContents.compute();
+        }
+
+        private void doForceResolveAllContents() {
             getAnnotations();
-            getSupertypes();
-            getParameters();
+            ForceResolveUtil.forceResolveAllContents(getSupertypes());
+            ForceResolveUtil.forceResolveAllContents(getParameters());
         }
     }
 
