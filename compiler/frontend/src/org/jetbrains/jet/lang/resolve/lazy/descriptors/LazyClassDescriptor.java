@@ -53,6 +53,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDescriptor, ClassDescriptor {
@@ -98,6 +99,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         if (classLikeInfo.getCorrespondingClassOrObject() != null) {
             this.resolveSession.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
         }
+        this.resolveSession.getTrace().record(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, getFQName(this).toSafe(), this);
 
         this.originalClassInfo = classLikeInfo;
         JetClassLikeInfo classLikeInfoForMembers =
