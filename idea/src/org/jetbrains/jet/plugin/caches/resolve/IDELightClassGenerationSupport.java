@@ -85,11 +85,10 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     @Override
-    public LightClassConstructionContext analyzeRelevantCode(@NotNull Collection<JetFile> files) {
+    public LightClassConstructionContext getContextForPackage(@NotNull Collection<JetFile> files) {
         if (files.isEmpty()) {
             return new LightClassConstructionContext(BindingContext.EMPTY, null);
         }
-
         List<JetFile> sortedFiles = new ArrayList<JetFile>(files);
         Collections.sort(sortedFiles, jetFileComparator);
 
@@ -97,7 +96,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         try {
             if (USE_LAZY) {
                 CancelableResolveSession session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(sortedFiles.get(0));
-                forceResolveRelevantDeclarations(files, session);
+                forceResolvePackageDeclarations(files, session);
                 return new LightClassConstructionContext(session.getBindingContext(), null);
             }
             else {
@@ -111,7 +110,27 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         }
     }
 
-    private static void forceResolveRelevantDeclarations(@NotNull Collection<JetFile> files, @NotNull KotlinCodeAnalyzer session) {
+    @NotNull
+    @Override
+    public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
+        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + " analyze", LOG).start();
+
+        try {
+            if (USE_LAZY) {
+                CancelableResolveSession session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) classOrObject.getContainingFile());
+                forceResolveAllContents(session.getClassDescriptor(classOrObject));
+                return new LightClassConstructionContext(session.getBindingContext(), null);
+            }
+            else {
+                return getContextForPackage(Collections.singleton((JetFile) classOrObject.getContainingFile()));
+            }
+        }
+        finally {
+            p.end();
+        }
+    }
+
+    private static void forceResolvePackageDeclarations(@NotNull Collection<JetFile> files, @NotNull KotlinCodeAnalyzer session) {
         for (JetFile file : files) {
             // Scripts are not supported
             if (file.isScript()) continue;
@@ -127,11 +146,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             }
 
             for (JetDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof JetClassOrObject) {
-                    ClassDescriptor descriptor = session.getClassDescriptor((JetClassOrObject) declaration);
-                    forceResolveAllContents(descriptor);
-                }
-                else if (declaration instanceof JetFunction) {
+                if (declaration instanceof JetFunction) {
                     JetFunction jetFunction = (JetFunction) declaration;
                     Name name = jetFunction.getNameAsSafeName();
                     Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name);
@@ -146,6 +161,9 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                     for (VariableDescriptor descriptor : properties) {
                         forceResolveAllContents(descriptor);
                     }
+                }
+                else if (declaration instanceof JetClassOrObject) {
+                    // Do nothing: we are not interested in classes
                 }
                 else {
                     LOG.error("Unsupported declaration kind: " + declaration + " in file " + file.getName() + "\n" + file.getText());

@@ -84,7 +84,18 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     @Override
-    public LightClassConstructionContext analyzeRelevantCode(@NotNull Collection<JetFile> files) {
+    public LightClassConstructionContext getContextForPackage(@NotNull Collection<JetFile> files) {
+        return getContext();
+    }
+
+    @NotNull
+    @Override
+    public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
+        return getContext();
+    }
+
+    @NotNull
+    private LightClassConstructionContext getContext() {
         return new LightClassConstructionContext(getTrace().getBindingContext(), null);
     }
 
