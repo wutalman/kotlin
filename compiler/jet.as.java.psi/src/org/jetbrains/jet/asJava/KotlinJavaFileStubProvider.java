@@ -74,6 +74,12 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
                 return packageFqName;
             }
 
+            @NotNull
+            @Override
+            public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
+                return LightClassGenerationSupport.getInstance(project).getContextForPackage(files);
+            }
+
             @Override
             public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
                 NamespaceCodegen codegen = state.getFactory().forNamespace(packageFqName, files);
@@ -102,6 +108,12 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
             @Override
             public FqName getPackageFqName() {
                 return JetPsiUtil.getFQName(getFile());
+            }
+
+            @NotNull
+            @Override
+            public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
+                return LightClassGenerationSupport.getInstance(classOrObject.getProject()).getContextForClassOrObject(classOrObject);
             }
 
             @Override
@@ -134,7 +146,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
 
         checkForBuiltIns(packageFqName, files);
 
-        LightClassConstructionContext context = LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(files);
+        LightClassConstructionContext context = stubGenerationStrategy.getContext(files);
 
         Throwable error = context.getError();
         if (error != null) {
@@ -231,8 +243,13 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
     }
 
     private interface StubGenerationStrategy {
-        @NotNull Collection<JetFile> getFiles();
-        @NotNull FqName getPackageFqName();
+        @NotNull
+        Collection<JetFile> getFiles();
+        @NotNull
+        FqName getPackageFqName();
+        @NotNull
+        LightClassConstructionContext getContext(@NotNull Collection<JetFile> files);
+
         boolean generateDeclaredClasses();
         void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files);
 

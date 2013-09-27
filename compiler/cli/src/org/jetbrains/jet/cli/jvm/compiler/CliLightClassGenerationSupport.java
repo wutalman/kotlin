@@ -33,14 +33,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
-import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -85,7 +83,18 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     @Override
-    public LightClassConstructionContext analyzeRelevantCode(@NotNull Collection<JetFile> files) {
+    public LightClassConstructionContext getContextForPackage(@NotNull Collection<JetFile> files) {
+        return getContext();
+    }
+
+    @NotNull
+    @Override
+    public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
+        return getContext();
+    }
+
+    @NotNull
+    private LightClassConstructionContext getContext() {
         return new LightClassConstructionContext(getTrace().getBindingContext(), null);
     }
 
