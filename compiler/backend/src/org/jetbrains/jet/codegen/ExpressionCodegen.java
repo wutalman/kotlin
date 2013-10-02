@@ -1980,7 +1980,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     public StackValue invokeFunction(
-            Call call,
+            @NotNull Call call,
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
