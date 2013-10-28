@@ -302,7 +302,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderAnnotations(@NotNull Annotated annotated, @NotNull StringBuilder builder) {
         if (!modifiers.contains(Modifier.ANNOTATIONS)) return;
-        for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
+        for (AnnotationDescriptor annotation : annotated.getAnnotations().getAnnotations()) {
             ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
             assert annotationClass != null;
 

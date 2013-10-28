@@ -46,7 +46,7 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -662,9 +662,9 @@ public class JetTestUtils {
     public static NamespaceDescriptorImpl createTestNamespace(@NotNull Name testPackageName) {
         ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<test module>");
         NamespaceDescriptorImpl rootNamespace =
-                new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), DescriptorUtils.ROOT_NAMESPACE_NAME);
+                new NamespaceDescriptorImpl(module, Annotations.EMPTY, DescriptorUtils.ROOT_NAMESPACE_NAME);
         module.setRootNamespace(rootNamespace);
-        NamespaceDescriptorImpl test = new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), testPackageName);
+        NamespaceDescriptorImpl test = new NamespaceDescriptorImpl(rootNamespace, Annotations.EMPTY, testPackageName);
         test.initialize(new WritableScopeImpl(JetScope.EMPTY, test, RedeclarationHandler.DO_NOTHING, "members of test namespace"));
         return test;
     }

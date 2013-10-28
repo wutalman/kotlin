@@ -36,7 +36,7 @@ import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -222,7 +222,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             super(new NamespaceDescriptorImpl(
                     new ModuleDescriptorImpl(Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY)
                             .setModuleConfiguration(ModuleConfiguration.EMPTY),
-                  Collections.<AnnotationDescriptor>emptyList(), Name.special("<root>")), Collections.<AnnotationDescriptor>emptyList(),
+                  Annotations.EMPTY, Name.special("<root>")), Annotations.EMPTY,
                   KotlinBuiltIns.getInstance().getBuiltInsPackage().getName());
         }
 

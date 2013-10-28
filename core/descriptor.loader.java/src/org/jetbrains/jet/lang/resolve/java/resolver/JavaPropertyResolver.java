@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -136,7 +136,7 @@ public final class JavaPropertyResolver {
             @NotNull JavaField field,
             boolean isVar
     ) {
-        List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(field);
+        Annotations annotations = annotationResolver.resolveAnnotations(field);
         Visibility visibility = field.getVisibility();
 
         if (field.isEnumEntry()) {
@@ -145,7 +145,7 @@ public final class JavaPropertyResolver {
             //TODO: this is a hack to indicate that this enum entry is an object
             // class descriptor for enum entries is not used by backends so for now this should be safe to use
             ClassDescriptorImpl dummyClassDescriptorForEnumEntryObject =
-                    new ClassDescriptorImpl(owner, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, propertyName);
+                    new ClassDescriptorImpl(owner, Annotations.EMPTY, Modality.FINAL, propertyName);
             dummyClassDescriptorForEnumEntryObject.initialize(
                     true,
                     Collections.<TypeParameterDescriptor>emptyList(),

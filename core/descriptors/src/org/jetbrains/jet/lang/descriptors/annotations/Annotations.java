@@ -18,15 +18,26 @@ package org.jetbrains.jet.lang.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AnnotatedImpl implements Annotated {
-    private final Annotations annotations;
+import java.util.Collections;
+import java.util.List;
 
-    public AnnotatedImpl(@NotNull Annotations annotations) {
-        this.annotations = annotations;
-    }
+public interface Annotations {
 
-    @Override
-    public Annotations getAnnotations() {
-        return annotations;
-    }
+    Annotations EMPTY = new Annotations() {
+        @NotNull
+        @Override
+        public List<AnnotationDescriptor> getAnnotations() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+    };
+
+    @NotNull
+    List<AnnotationDescriptor> getAnnotations();
+
+    boolean isEmpty();
 }

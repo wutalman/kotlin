@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -36,7 +36,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     public PropertySetterDescriptorImpl(
             @NotNull PropertyDescriptor correspondingProperty,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean hasBody,
@@ -48,7 +48,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     public PropertySetterDescriptorImpl(
             @NotNull PropertyDescriptor correspondingProperty,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean hasBody,
@@ -67,7 +67,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     public void initializeDefault() {
         assert parameter == null;
-        parameter = new ValueParameterDescriptorImpl(this, 0, Collections.<AnnotationDescriptor>emptyList(), Name.special("<set-?>"), getCorrespondingProperty().getReturnType(), false, null);
+        parameter = new ValueParameterDescriptorImpl(this, 0, Annotations.EMPTY, Name.special("<set-?>"), getCorrespondingProperty().getReturnType(), false, null);
     }
 
     @NotNull

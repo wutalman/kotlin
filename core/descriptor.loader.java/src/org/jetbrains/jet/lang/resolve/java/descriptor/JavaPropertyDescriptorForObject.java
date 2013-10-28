@@ -20,16 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibility;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorForObjectImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
-
-import java.util.List;
 
 public class JavaPropertyDescriptorForObject extends PropertyDescriptorForObjectImpl implements JavaCallableMemberDescriptor {
     public JavaPropertyDescriptorForObject(
             @NotNull ClassOrNamespaceDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Visibility visibility,
             @NotNull Name name,
             @NotNull ClassDescriptor objectClass

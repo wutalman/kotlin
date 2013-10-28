@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
@@ -34,12 +34,11 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
-    private List<AnnotationDescriptor> annotations = Lists.newArrayList();
+    private Annotations annotations = Annotations.EMPTY;
 
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = Lists.newArrayList();
@@ -85,7 +84,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         assert typeConstructor == null : typeConstructor;
         this.typeConstructor = new TypeConstructorImpl(
                 this,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO : pass annotations from the class?
+                Annotations.EMPTY, // TODO : pass annotations from the class?
                 !getModality().isOverridable(),
                 getName().asString(),
                 typeParameters,
@@ -210,11 +209,11 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     }
 
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
+    public Annotations getAnnotations() {
         return annotations;
     }
 
-    public void setAnnotations(List<AnnotationDescriptor> annotations) {
+    public void setAnnotations(Annotations annotations) {
         this.annotations = annotations;
     }
 

@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
@@ -178,7 +178,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
             }
 
             @Override
-            public List<AnnotationDescriptor> getAnnotations() {
+            public Annotations getAnnotations() {
                 return AbstractLazyTypeParameterDescriptor.this.getAnnotations();
             }
 
@@ -247,8 +247,8 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     }
 
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
-        return Collections.emptyList(); // TODO
+    public Annotations getAnnotations() {
+        return Annotations.EMPTY; // TODO
     }
 
     @NotNull

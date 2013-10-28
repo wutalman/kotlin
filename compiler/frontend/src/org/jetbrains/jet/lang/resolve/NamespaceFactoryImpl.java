@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Collections;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
@@ -175,7 +174,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         NamespaceDescriptorImpl namespaceDescriptor;
         namespaceDescriptor = new NamespaceDescriptorImpl(
                 owner,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
+                Annotations.EMPTY, // TODO: annotations
                 name
         );
         trace.record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);

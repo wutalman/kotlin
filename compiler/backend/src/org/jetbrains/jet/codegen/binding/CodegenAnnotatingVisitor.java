@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.SamCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -77,7 +77,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         classDescriptor = new ClassDescriptorImpl(
                 funDescriptor.getContainingDeclaration(),
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 Modality.FINAL,
                 Name.special("<closure>"));
         ((ClassDescriptorImpl)classDescriptor).initialize(

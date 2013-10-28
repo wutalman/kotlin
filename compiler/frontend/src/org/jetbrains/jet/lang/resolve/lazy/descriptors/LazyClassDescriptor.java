@@ -27,7 +27,7 @@ import jet.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -77,7 +77,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final boolean isInner;
 
     private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
-    private final NotNullLazyValue<List<AnnotationDescriptor>> annotations;
+    private final NotNullLazyValue<Annotations> annotations;
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
@@ -130,9 +130,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                 return DescriptorFactory.createLazyReceiverParameterDescriptor(LazyClassDescriptor.this);
             }
         });
-        this.annotations = storageManager.createLazyValue(new Function0<List<AnnotationDescriptor>>() {
+        this.annotations = storageManager.createLazyValue(new Function0<Annotations>() {
             @Override
-            public List<AnnotationDescriptor> invoke() {
+            public Annotations invoke() {
                 return resolveAnnotations();
             }
         });
@@ -327,12 +327,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
+    public Annotations getAnnotations() {
         return annotations.invoke();
     }
 
     @NotNull
-    private List<AnnotationDescriptor> resolveAnnotations() {
+    private Annotations resolveAnnotations() {
         JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
         JetModifierList modifierList = classInfo.getModifierList();
         if (modifierList != null) {
@@ -341,7 +341,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
             return annotationResolver.resolveAnnotationsWithArguments(scopeForDeclaration, modifierList, resolveSession.getTrace());
         }
         else {
-            return Collections.emptyList();
+            return Annotations.EMPTY;
         }
     }
 
@@ -476,8 +476,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         }
 
         @Override
-        public List<AnnotationDescriptor> getAnnotations() {
-            return Collections.emptyList(); // TODO
+        public Annotations getAnnotations() {
+            return Annotations.EMPTY; // TODO
         }
 
         @Override

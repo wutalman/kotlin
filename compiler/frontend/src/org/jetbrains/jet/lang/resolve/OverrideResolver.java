@@ -614,7 +614,7 @@ public class OverrideResolver {
     @NotNull
     private JetAnnotationEntry findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
         ClassDescriptor stdDataClassAnnotation = KotlinBuiltIns.getInstance().getDataClassAnnotation();
-        for (AnnotationDescriptor annotation : dataClass.getAnnotations()) {
+        for (AnnotationDescriptor annotation : dataClass.getAnnotations().getAnnotations()) {
             if (stdDataClassAnnotation.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
                 return BindingContextUtils.getNotNull(trace.getBindingContext(),
                                                       BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT,

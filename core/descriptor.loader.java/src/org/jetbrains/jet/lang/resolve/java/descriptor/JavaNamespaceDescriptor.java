@@ -17,19 +17,17 @@
 package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractNamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-
-import java.util.List;
 
 public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     private JetScope memberScope;
     private final FqName qualifiedName;
 
-    public JavaNamespaceDescriptor(NamespaceDescriptorParent containingDeclaration, List<AnnotationDescriptor> annotations,
+    public JavaNamespaceDescriptor(NamespaceDescriptorParent containingDeclaration, Annotations annotations,
             @NotNull FqName qualifiedName) {
         super(containingDeclaration, annotations, qualifiedName.shortNameOrSpecial());
         this.qualifiedName = qualifiedName;

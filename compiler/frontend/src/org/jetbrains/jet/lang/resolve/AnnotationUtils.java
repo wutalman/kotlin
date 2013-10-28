@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -89,9 +90,9 @@ public class AnnotationUtils {
     }
 
     public static boolean isArrayMethodCall(@NotNull ResolvedCall resolvedCall) {
-        List<AnnotationDescriptor> annotations = resolvedCall.getResultingDescriptor().getOriginal().getAnnotations();
+        Annotations annotations = resolvedCall.getResultingDescriptor().getOriginal().getAnnotations();
         if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
+            for (AnnotationDescriptor annotation : annotations.getAnnotations()) {
                 //noinspection ConstantConditions
                 if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
                     return "kotlin.arrays.array".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
@@ -102,9 +103,9 @@ public class AnnotationUtils {
     }
 
     public static boolean isJavaClassMethodCall(@NotNull ResolvedCall resolvedCall) {
-        List<AnnotationDescriptor> annotations = resolvedCall.getResultingDescriptor().getOriginal().getAnnotations();
+        Annotations annotations = resolvedCall.getResultingDescriptor().getOriginal().getAnnotations();
         if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
+            for (AnnotationDescriptor annotation : annotations.getAnnotations()) {
                 //noinspection ConstantConditions
                 if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
                     return "kotlin.javaClass.function".equals(annotation.getAllValueArguments().values().iterator().next().getValue());

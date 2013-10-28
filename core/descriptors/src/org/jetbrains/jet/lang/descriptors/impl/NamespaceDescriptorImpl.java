@@ -17,21 +17,22 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-
-import java.util.List;
 
 public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
 
     private WritableScope memberScope;
 
     public NamespaceDescriptorImpl(@NotNull NamespaceDescriptorParent containingDeclaration,
-                                   @NotNull List<AnnotationDescriptor> annotations,
+                                   @NotNull Annotations annotations,
                                    @NotNull Name name) {
         super(containingDeclaration, annotations, name);
     }

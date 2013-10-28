@@ -20,16 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
-
-import java.util.List;
 
 public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorNonRootImpl implements NamespaceDescriptor {
     public AbstractNamespaceDescriptorImpl(
             @NotNull NamespaceDescriptorParent containingDeclaration,
-            List<AnnotationDescriptor> annotations,
+            Annotations annotations,
             @NotNull Name name) {
 
         super(containingDeclaration, annotations, name);

@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -48,7 +48,7 @@ public class DescriptorFactory {
     @NotNull
     public static PropertySetterDescriptorImpl createSetter(@NotNull PropertyDescriptor propertyDescriptor, boolean isDefault) {
         PropertySetterDescriptorImpl setterDescriptor = new PropertySetterDescriptorImpl(
-                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
+                propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
                 !isDefault, isDefault, CallableMemberDescriptor.Kind.DECLARATION);
         setterDescriptor.initializeDefault();
@@ -63,7 +63,7 @@ public class DescriptorFactory {
     @NotNull
     public static PropertyGetterDescriptorImpl createGetter(@NotNull PropertyDescriptor propertyDescriptor, boolean isDefault) {
         return new PropertyGetterDescriptorImpl(
-                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
+                propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
                 !isDefault, isDefault, CallableMemberDescriptor.Kind.DECLARATION);
     }
@@ -71,7 +71,7 @@ public class DescriptorFactory {
     @NotNull
     public static ConstructorDescriptorImpl createPrimaryConstructorForObject(@NotNull ClassDescriptor containingClass) {
         ConstructorDescriptorImpl constructorDescriptor =
-                new ConstructorDescriptorImpl(containingClass, Collections.<AnnotationDescriptor>emptyList(), true);
+                new ConstructorDescriptorImpl(containingClass, Annotations.EMPTY, true);
         constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(),
                                          Collections.<ValueParameterDescriptor>emptyList(),
                                          getDefaultConstructorVisibility(containingClass));
@@ -84,7 +84,7 @@ public class DescriptorFactory {
             @NotNull JetType returnType
     ) {
         SimpleFunctionDescriptorImpl values =
-                new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUES_METHOD_NAME,
+                new SimpleFunctionDescriptorImpl(classObject, Annotations.EMPTY, VALUES_METHOD_NAME,
                                                  CallableMemberDescriptor.Kind.DECLARATION);
         return values.initialize(null, classObject.getThisAsReceiverParameter(), Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
@@ -98,12 +98,12 @@ public class DescriptorFactory {
             @NotNull JetType returnType
     ) {
         SimpleFunctionDescriptorImpl values =
-                new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUE_OF_METHOD_NAME,
+                new SimpleFunctionDescriptorImpl(classObject, Annotations.EMPTY, VALUE_OF_METHOD_NAME,
                                                  CallableMemberDescriptor.Kind.DECLARATION);
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
                 values,
                 0,
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 Name.identifier("value"),
                 KotlinBuiltIns.getInstance().getStringType(),
                 false,

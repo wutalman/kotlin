@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -143,7 +143,7 @@ public class CodegenBinding {
     ) {
         ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                 scriptDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 Modality.FINAL,
                 Name.special("<script-" + asmType.getInternalName() + ">"));
         classDescriptor.initialize(

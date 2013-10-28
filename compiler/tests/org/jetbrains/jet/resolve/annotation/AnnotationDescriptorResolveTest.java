@@ -353,7 +353,7 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
     }
 
     private static void checkDescriptor(String expectedAnnotation, DeclarationDescriptor member) {
-        String actual = StringUtil.join(member.getAnnotations(), new Function<AnnotationDescriptor, String>() {
+        String actual = StringUtil.join(member.getAnnotations().getAnnotations(), new Function<AnnotationDescriptor, String>() {
             @Override
             public String fun(AnnotationDescriptor annotationDescriptor) {
                 return annotationDescriptor.getType().toString() + DescriptorUtils.getSortedValueArguments(annotationDescriptor, DescriptorRenderer.TEXT);

@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -45,7 +45,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
 
     public ClassDescriptorImpl(
         @NotNull DeclarationDescriptor containingDeclaration,
-        @NotNull List<AnnotationDescriptor> annotations,
+        @NotNull Annotations annotations,
         @NotNull Modality modality,
         @NotNull Name name
     ) {
@@ -55,7 +55,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull ClassKind kind,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Name name) {
         super(containingDeclaration, annotations, name);

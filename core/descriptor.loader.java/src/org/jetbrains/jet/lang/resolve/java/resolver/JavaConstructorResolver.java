@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
@@ -107,7 +107,7 @@ public final class JavaConstructorResolver {
 
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 containingClass,
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 true);
 
         List<TypeParameterDescriptor> typeParameters = containingClass.getTypeConstructor().getParameters();
@@ -157,7 +157,7 @@ public final class JavaConstructorResolver {
             result.add(new ValueParameterDescriptorImpl(
                     constructorDescriptor,
                     index,
-                    Collections.<AnnotationDescriptor>emptyList(),
+                    Annotations.EMPTY,
                     method.getName(),
                     typeTransformer.transformToType(returnType, typeVariableResolver),
                     method.hasAnnotationParameterDefaultValue(),
@@ -191,7 +191,7 @@ public final class JavaConstructorResolver {
 
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                Annotations.EMPTY, // TODO
                 false);
 
         List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();

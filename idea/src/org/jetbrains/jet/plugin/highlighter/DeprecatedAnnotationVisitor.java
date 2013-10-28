@@ -220,7 +220,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     @Nullable
     private static AnnotationDescriptor getDeprecated(DeclarationDescriptor descriptor) {
-        for (AnnotationDescriptor annotation : descriptor.getAnnotations()) {
+        for (AnnotationDescriptor annotation : descriptor.getAnnotations().getAnnotations()) {
             ClassDescriptor jetDeprecated = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(annotation.getType());
             if (jetDeprecated.equals(classDescriptor)) {

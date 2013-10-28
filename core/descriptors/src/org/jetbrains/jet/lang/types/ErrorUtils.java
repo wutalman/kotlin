@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
@@ -246,7 +246,7 @@ public class ErrorUtils {
 
     private static final Set<ConstructorDescriptor> ERROR_CONSTRUCTOR_GROUP = Collections.singleton(createErrorConstructor());
 
-    private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), true);
+    private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Annotations.EMPTY, true);
 
     static {
         ERROR_CLASS.initializeErrorClass();
@@ -278,7 +278,7 @@ public class ErrorUtils {
     private static final JetType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
     private static final VariableDescriptor ERROR_PROPERTY = new PropertyDescriptorImpl(
             ERROR_CLASS,
-            Collections.<AnnotationDescriptor>emptyList(),
+            Annotations.EMPTY,
             Modality.OPEN,
             Visibilities.INTERNAL,
             true,
@@ -307,7 +307,7 @@ public class ErrorUtils {
 
     @NotNull
     private static ConstructorDescriptor createErrorConstructor() {
-        ConstructorDescriptorImpl r = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false);
+        ConstructorDescriptorImpl r = new ConstructorDescriptorImpl(ERROR_CLASS, Annotations.EMPTY, false);
         r.initialize(
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
@@ -334,7 +334,7 @@ public class ErrorUtils {
 
     @NotNull
     private static TypeConstructor createErrorTypeConstructorWithCustomDebugName(@NotNull String debugName) {
-        return new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName,
+        return new TypeConstructorImpl(ERROR_CLASS, Annotations.EMPTY, false, debugName,
                                 Collections.<TypeParameterDescriptorImpl>emptyList(),
                                 Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
     }
@@ -407,8 +407,8 @@ public class ErrorUtils {
         }
 
         @Override
-        public List<AnnotationDescriptor> getAnnotations() {
-            return Collections.emptyList();
+        public Annotations getAnnotations() {
+            return Annotations.EMPTY;
         }
 
         @Override

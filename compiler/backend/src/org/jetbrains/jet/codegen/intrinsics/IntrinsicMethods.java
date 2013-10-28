@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -34,7 +35,6 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -240,9 +240,9 @@ public class IntrinsicMethods {
             }
         }
 
-        List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
+        Annotations annotations = descriptor.getAnnotations();
         if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
+            for (AnnotationDescriptor annotation : annotations.getAnnotations()) {
                 ClassifierDescriptor classifierDescriptor = annotation.getType().getConstructor().getDeclarationDescriptor();
                 assert classifierDescriptor != null;
                 if ("Intrinsic".equals(classifierDescriptor.getName().asString())) {

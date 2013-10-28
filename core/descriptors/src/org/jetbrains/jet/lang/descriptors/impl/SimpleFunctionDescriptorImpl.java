@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -32,7 +33,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
 
     public SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind
     ) {
@@ -42,7 +43,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     private SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull SimpleFunctionDescriptor original,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind) {
         super(containingDeclaration, original, annotations, name, kind);

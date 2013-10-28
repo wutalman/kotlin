@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -123,7 +123,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         return JetTypeInfo.create(new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(), numberValueTypeConstructor,
+                Annotations.EMPTY, numberValueTypeConstructor,
                 false, Collections.<TypeProjection>emptyList(),
                 ErrorUtils.createErrorScope("Scope for number value type (" + value + ")", true)), dataFlowInfo);
     }
@@ -499,7 +499,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         //noinspection ConstantConditions
         JetType type = KotlinBuiltIns.getInstance().getKFunctionType(
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 receiverType,
                 DescriptorUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType(),
@@ -508,7 +508,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(),
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 CallableMemberDescriptor.Kind.DECLARATION);
 
         FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, type, null, Modality.FINAL, Visibilities.PUBLIC);

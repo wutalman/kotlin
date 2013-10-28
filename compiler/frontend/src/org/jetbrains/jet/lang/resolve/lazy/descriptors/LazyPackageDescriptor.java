@@ -20,7 +20,7 @@ import com.google.common.collect.Iterables;
 import com.intellij.psi.NavigatablePsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractNamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -33,8 +33,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 
-import java.util.Collections;
-
 public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl implements LazyDescriptor, NamespaceDescriptor {
     private final JetScope memberScope;
     private final JetScope lazyScope;
@@ -45,7 +43,7 @@ public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl imple
             @NotNull ResolveSession resolveSession,
             @NotNull PackageMemberDeclarationProvider declarationProvider
     ) {
-        super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name);
+        super(containingDeclaration, Annotations.EMPTY, name);
 
         WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Package scope");
         resolveSession.getRootModuleDescriptor().getModuleConfiguration().extendNamespaceScope(this, scope);

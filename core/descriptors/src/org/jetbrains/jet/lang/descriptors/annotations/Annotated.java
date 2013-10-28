@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors.annotations;
 
-import java.util.List;
-
 public interface Annotated {
-    List<AnnotationDescriptor> getAnnotations();
+    Annotations getAnnotations();
 }

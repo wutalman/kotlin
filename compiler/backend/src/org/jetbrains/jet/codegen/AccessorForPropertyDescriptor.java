@@ -16,8 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.Visibilities;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyGetterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertySetterDescriptorImpl;
@@ -30,7 +33,7 @@ import java.util.Collections;
 
 public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
     public AccessorForPropertyDescriptor(PropertyDescriptor pd, DeclarationDescriptor containingDeclaration, int index) {
-        super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.LOCAL,
+        super(containingDeclaration, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
               pd.isVar(), Name.identifier(pd.getName() + "$b$" + index),
               Kind.DECLARATION);
 
@@ -45,7 +48,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
 
     public static class Getter extends PropertyGetterDescriptorImpl {
         public Getter(AccessorForPropertyDescriptor property) {
-            super(property, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.LOCAL,
+            super(property, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
                   false,
                   false, Kind.DECLARATION);
             initialize(property.getType());
@@ -54,7 +57,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
 
     public static class Setter extends PropertySetterDescriptorImpl {
         public Setter(AccessorForPropertyDescriptor property) {
-            super(property, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.LOCAL,
+            super(property, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
                   false,
                   false, Kind.DECLARATION);
             initializeDefault();

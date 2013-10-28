@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -113,7 +113,7 @@ public final class JavaNamespaceResolver {
 
         JavaNamespaceDescriptor javaNamespaceDescriptor = new JavaNamespaceDescriptor(
                 parentNs,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                Annotations.EMPTY, // TODO
                 qualifiedName
         );
 

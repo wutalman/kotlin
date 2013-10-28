@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ModuleDescriptor {
@@ -42,7 +41,7 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements M
             @NotNull List<ImportPath> defaultImports,
             @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
     ) {
-        super(Collections.<AnnotationDescriptor>emptyList(), name);
+        super(Annotations.EMPTY, name);
         if (!name.isSpecial()) {
             throw new IllegalArgumentException("module name must be special: " + name);
         }

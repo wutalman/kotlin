@@ -230,7 +230,7 @@ public abstract class AnnotationCodegen {
     }
 
     private static RetentionPolicy getRetentionPolicy(ClassifierDescriptor descriptor, JetTypeMapper typeMapper) {
-        for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
+        for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations().getAnnotations()) {
             String internalName = typeMapper.mapType(annotationDescriptor.getType()).getInternalName();
             if("java/lang/annotation/Retention".equals(internalName)) {
                 CompileTimeConstant<?> compileTimeConstant = annotationDescriptor.getAllValueArguments().values().iterator().next();

@@ -20,10 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptorForObject;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
-
-import java.util.List;
 
 public class LocalVariableDescriptorForObject extends LocalVariableDescriptor implements VariableDescriptorForObject {
 
@@ -31,7 +29,7 @@ public class LocalVariableDescriptorForObject extends LocalVariableDescriptor im
 
     public LocalVariableDescriptorForObject(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull ClassDescriptor objectClass
     ) {

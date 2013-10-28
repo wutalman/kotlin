@@ -18,10 +18,8 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
-
-import java.util.List;
 
 public class PropertyDescriptorForObjectImpl extends PropertyDescriptorImpl implements VariableDescriptorForObject {
 
@@ -29,7 +27,7 @@ public class PropertyDescriptorForObjectImpl extends PropertyDescriptorImpl impl
 
     public PropertyDescriptorForObjectImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Visibility visibility,
             @NotNull Name name,
             @NotNull ClassDescriptor objectClass

@@ -81,7 +81,7 @@ public class ExpectedLoadErrorsUtil {
             }
 
             private Void visitDeclaration(@NotNull DeclarationDescriptor descriptor) {
-                for (AnnotationDescriptor annotation : descriptor.getAnnotations()) {
+                for (AnnotationDescriptor annotation : descriptor.getAnnotations().getAnnotations()) {
                     ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
                     assert annotationClass != null;
 

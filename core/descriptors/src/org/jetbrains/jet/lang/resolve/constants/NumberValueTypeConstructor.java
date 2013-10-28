@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
 import java.util.Collections;
@@ -50,7 +50,7 @@ public abstract class NumberValueTypeConstructor implements TypeConstructor {
     }
 
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
-        return Collections.emptyList();
+    public Annotations getAnnotations() {
+        return Annotations.EMPTY;
     }
 }

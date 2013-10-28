@@ -75,7 +75,7 @@ public final class AnnotationsUtils {
 
     @Nullable
     private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor, @NotNull String fqn) {
-        for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
+        for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations().getAnnotations()) {
             if (getAnnotationClassFQName(annotationDescriptor).equals(fqn)) {
                 return annotationDescriptor;
             }
