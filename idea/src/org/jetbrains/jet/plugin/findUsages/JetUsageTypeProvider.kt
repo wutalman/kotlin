@@ -186,7 +186,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             } else {
                 getClassUsageType()
             }
-            is JavaPackageFragmentDescriptor -> getClassUsageType()
+            is PackageViewDescriptor -> getClassUsageType()
             is VariableDescriptor -> getVariableUsageType()
             is FunctionDescriptor -> getFunctionUsageType(descriptor)
             else -> null
