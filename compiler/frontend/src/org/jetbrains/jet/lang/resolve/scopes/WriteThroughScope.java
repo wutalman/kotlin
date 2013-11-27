@@ -46,6 +46,13 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
+    public WritableScope changeLockLevel(LockLevel lockLevel) {
+        super.changeLockLevel(lockLevel);
+        writableWorker.changeLockLevel(lockLevel);
+        return this;
+    }
+
+    @Override
     @NotNull
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
         checkMayRead();
