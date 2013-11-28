@@ -35,6 +35,7 @@ import java.util.List;
 
 public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ModuleDescriptor {
     private final List<PackageFragmentProvider> fragmentProviders = Lists.newArrayList();
+    private final CompositePackageFragmentProvider packageFragmentProvider = new CompositePackageFragmentProvider(fragmentProviders);
     private ModuleConfiguration moduleConfiguration;
     private final List<ImportPath> defaultImports;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
@@ -62,19 +63,16 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements M
         return null;
     }
 
-    // TODO 1 maybe shouldn't be public
-    // TODO 1 creation on each call
     @NotNull
     @Override
     public PackageFragmentProvider getPackageFragmentProvider() {
-        return new CompositePackageFragmentProvider(fragmentProviders);
+        return packageFragmentProvider;
     }
 
-    // TODO 1 creation on each call - no good
     @Nullable
     @Override
     public PackageViewDescriptor getPackage(@NotNull FqName fqName) {
-        List<PackageFragmentDescriptor> fragments = getPackageFragmentProvider().getPackageFragments(fqName);
+        List<PackageFragmentDescriptor> fragments = packageFragmentProvider.getPackageFragments(fqName);
         return !fragments.isEmpty()
                ? new PackageViewDescriptorImpl(this, fqName, fragments)
                : null;
