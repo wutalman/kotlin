@@ -184,7 +184,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "LoadCompiledKotlinTestGenerated",
                 AbstractLoadCompiledKotlinTest.class,
-                testModel("compiler/testData/loadKotlin", "doTestWithAccessors")
+                testModel("compiler/testData/loadKotlin", "doTest")
         );
 
         generateTest(
