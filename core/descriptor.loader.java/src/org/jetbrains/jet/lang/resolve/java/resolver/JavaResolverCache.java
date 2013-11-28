@@ -49,6 +49,4 @@ public interface JavaResolverCache {
     void recordProperPackage(@NotNull PackageFragmentDescriptor descriptor);
 
     void recordClassStaticMembersNamespace(@NotNull PackageFragmentDescriptor descriptor);
-
-    void recordPackage(@NotNull JavaElement element, @NotNull PackageFragmentDescriptor descriptor);
 }

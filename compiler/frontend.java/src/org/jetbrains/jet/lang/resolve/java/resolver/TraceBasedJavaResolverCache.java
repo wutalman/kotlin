@@ -134,10 +134,4 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     public void recordClassStaticMembersNamespace(@NotNull PackageFragmentDescriptor descriptor) {
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, descriptor, JavaNamespaceKind.CLASS_STATICS);
     }
-
-    @Override
-    public void recordPackage(@NotNull JavaElement element, @NotNull PackageFragmentDescriptor descriptor) {
-        // TODO 1
-        //trace.record(PACKAGE, ((JavaElementImpl) element).getPsi(), descriptor);
-    }
 }

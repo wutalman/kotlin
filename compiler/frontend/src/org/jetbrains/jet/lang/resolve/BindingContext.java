@@ -194,8 +194,6 @@ public interface BindingContext {
         }
     };
 
-    WritableSlice<PsiElement, PackageViewDescriptor> PACKAGE = Slices.<PsiElement, PackageViewDescriptor>sliceBuilder()
-            .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
     WritableSlice<PsiElement, ClassDescriptor> CLASS =
             Slices.<PsiElement, ClassDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
                     .build();
@@ -227,7 +225,7 @@ public interface BindingContext {
                     .build();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
-            PACKAGE, CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
+            CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
             PRIMARY_CONSTRUCTOR_PARAMETER
     };
 

@@ -159,23 +159,12 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
                 }
             }
 
-
-            // Otherwise (if psiClass is null or doesn't have a supported Kotlin annotation), it's a Java class and the package is empty
-            if (record) {
-                cache.recordPackage(javaPackage, packageFragment);
-            }
-
             return new JavaPackageScope(packageFragment, javaPackage, fqName, memberResolver);
         }
 
         JavaClass javaClass = javaClassFinder.findClass(fqName);
         if (javaClass != null && shouldCreateStaticMembersPackage(javaClass)) {
             cache.recordClassStaticMembersNamespace(packageFragment);
-
-            if (record) {
-                cache.recordPackage(javaClass, packageFragment);
-            }
-
             return new JavaClassStaticMembersScope(packageFragment, javaClass, memberResolver);
         }
         return null;
