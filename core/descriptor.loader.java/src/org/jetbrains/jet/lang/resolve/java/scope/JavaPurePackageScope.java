@@ -31,21 +31,24 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
-public final class JavaPackageScope extends JavaBaseScope {
+public final class JavaPurePackageScope extends JavaBaseScope implements JavaPackageFragmentScope {
     @NotNull
     private final JavaPackage javaPackage;
     @NotNull
     private final FqName packageFQN;
+    private final boolean includeKotlinClasses;
 
-    public JavaPackageScope(
+    public JavaPurePackageScope(
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull JavaPackage javaPackage,
             @NotNull FqName packageFQN,
-            @NotNull JavaMemberResolver memberResolver
+            @NotNull JavaMemberResolver memberResolver,
+            boolean includeKotlinClasses
     ) {
         super(descriptor, memberResolver, MembersProvider.forPackage(javaPackage));
         this.javaPackage = javaPackage;
         this.packageFQN = packageFQN;
+        this.includeKotlinClasses = includeKotlinClasses;
     }
 
     @Override
@@ -67,6 +70,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
         for (JavaClass javaClass : DescriptorResolverUtils.getClassesInPackage(javaPackage)) {
             if (DescriptorResolverUtils.isCompiledKotlinPackageClass(javaClass)) continue;
+            if (!includeKotlinClasses && DescriptorResolverUtils.isCompiledKotlinClass(javaClass)) continue;
 
             if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) continue;
 
@@ -106,6 +110,7 @@ public final class JavaPackageScope extends JavaBaseScope {
         return Collections.emptyList();
     }
 
+    @Override
     @NotNull
     public Collection<FqName> getSubPackages() {
         List<FqName> result = Lists.newArrayList();
