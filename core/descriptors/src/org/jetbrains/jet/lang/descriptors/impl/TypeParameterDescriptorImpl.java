@@ -192,15 +192,6 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
         return typeConstructor;
     }
 
-    @Override
-    public String toString() {
-        try {
-            return DescriptorRenderer.TEXT.render(this);
-        } catch (Exception e) {
-            return this.getClass().getName() + "@" + System.identityHashCode(this);
-        }
-    }
-
     @NotNull
     @Override
     @Deprecated
