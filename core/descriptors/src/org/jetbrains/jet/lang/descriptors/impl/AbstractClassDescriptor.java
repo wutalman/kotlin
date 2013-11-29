@@ -20,6 +20,7 @@ import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -33,14 +34,13 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 
-public abstract class AbstractClassDescriptor implements ClassDescriptor {
-    private final Name name;
+public abstract class AbstractClassDescriptor extends DeclarationDescriptorImpl implements ClassDescriptor {
     protected final NotNullLazyValue<JetType> defaultType;
     private final NotNullLazyValue<JetScope> unsubstitutedInnerClassesScope;
     private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
 
     public AbstractClassDescriptor(@NotNull StorageManager storageManager, @NotNull Name name) {
-        this.name = name;
+        super(AnnotationDescriptor.EMPTY_LIST, name);
         this.defaultType = storageManager.createLazyValue(new Function0<JetType>() {
             @Override
             public JetType invoke() {
@@ -59,18 +59,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
                 return new LazyClassReceiverParameterDescriptor(AbstractClassDescriptor.this);
             }
         });
-    }
-
-    @NotNull
-    @Override
-    public Name getName() {
-        return name;
-    }
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getOriginal() {
-        return this;
     }
 
     @NotNull
@@ -136,11 +124,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
     @Override
     public JetType getDefaultType() {
         return defaultType.invoke();
-    }
-
-    @Override
-    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
-        visitor.visitClassDescriptor(this, null);
     }
 
     @Override

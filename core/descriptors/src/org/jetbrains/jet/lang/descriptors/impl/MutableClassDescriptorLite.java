@@ -170,15 +170,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         }
     }
 
-    @Override
-    public String toString() {
-        try {
-            return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
-        } catch (Throwable e) {
-            return super.toString();
-        }
-    }
-
     @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {

@@ -315,11 +315,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     @Override
-    public String toString() {
-        return "lazy class " + getName().toString();
-    }
-
-    @Override
     public void forceResolveAllContents() {
         getAnnotations();
         getClassObjectDescriptor();
