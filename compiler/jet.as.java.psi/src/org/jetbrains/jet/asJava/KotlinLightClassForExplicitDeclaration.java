@@ -347,7 +347,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
         ClassDescriptor deprecatedAnnotation = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
         String deprecatedName = deprecatedAnnotation.getName().asString();
-        FqNameUnsafe deprecatedFqName = DescriptorUtils.getFQName(deprecatedAnnotation);
+        FqNameUnsafe deprecatedFqName = DescriptorUtils.getFqName(deprecatedAnnotation);
 
         for (JetAnnotationEntry annotationEntry : jetModifierList.getAnnotationEntries()) {
             JetTypeReference typeReference = annotationEntry.getTypeReference();

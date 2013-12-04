@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collections;
 import java.util.List;
@@ -111,7 +110,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
     }
 
     private String nameForAssertions() {
-        return getName() + " declared in " + DescriptorUtils.getFQName(getContainingDeclaration());
+        return getName() + " declared in " + DescriptorUtils.getFqName(getContainingDeclaration());
     }
 
     public void setInitialized() {
