@@ -62,7 +62,7 @@ class DefaultCallCase(callInfo: FunctionCallInfo): FunctionCallCase(callInfo) { 
             val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, qualifierForFunction))
             return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
         }
-        val functionCall = Namer.getFunctionCallRef(JsNameRef(functionName, qualifierForFunction))
+        val functionCall = JsNameRef(functionName, qualifierForFunction) // TODO: remake to call
         return JsInvocation(functionCall, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }
     override fun FunctionCallInfo.noReceivers(): JsExpression {
