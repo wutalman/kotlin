@@ -108,30 +108,24 @@ open class FunctionCallCase(override val callInfo: FunctionCallInfo) : CallCase<
 open class VariableAccessCase(override val callInfo: VariableAccessInfo) : CallCase<VariableAccessInfo>
 
 class CallCaseDispatcher<C : CallCase<I>, I : BaseCallInfo> {
-    private val cases: MutableList<CanBeApplyCase<I>> = ArrayList()
-
-    private class CanBeApplyCase<I : BaseCallInfo>(val apply: (I) -> JsExpression?)
+    private val cases: MutableList<(I) -> JsExpression?> = ArrayList()
 
     fun addCase(canBeApplyCase: (I) -> JsExpression?) {
-        cases.add(CanBeApplyCase(canBeApplyCase))
+        cases.add(canBeApplyCase)
     }
 
     fun addCase(caseConstructor: (I) -> C, canApply: (I) -> Boolean) {
-        cases.add(CanBeApplyCase{
-            if (canApply(it)) {
+        cases.add({
+            if (canApply(it))
                 caseConstructor(it).translate()
-            }
-            null
+            else
+                null
         })
-    }
-
-    fun addCase(canApply: (I) -> Boolean, caseConstructor: (I) -> C) {
-        addCase(caseConstructor, canApply)
     }
 
     fun translate(callInfo: I): JsExpression {
         for (case in cases) {
-            val result = case.apply(callInfo)
+            val result = case(callInfo)
             if (result != null)
                 return result
         }
