@@ -45,10 +45,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -221,19 +218,24 @@ public class AnnotationResolver {
 
             JetType varargElementType = parameterDescriptor.getVarargElementType();
             List<CompileTimeConstant<?>> constants = resolveValueArguments(descriptorToArgument.getValue(), parameterDescriptor.getType(), trace);
-            if (varargElementType == null) {
-                for (CompileTimeConstant<?> constant : constants) {
-                    annotationDescriptor.setValueArgument(parameterDescriptor, constant);
-                }
-            }
-            else {
+
+            if (varargElementType != null && isCalledAsVararg(constants)) {
                 JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
                 if (arrayType == null) {
                     arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
                 }
                 annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType));
             }
+            else {
+                for (CompileTimeConstant<?> constant : constants) {
+                    annotationDescriptor.setValueArgument(parameterDescriptor, constant);
+                }
+            }
         }
+    }
+
+    private static boolean isCalledAsVararg(@NotNull Collection<CompileTimeConstant<?>> constants) {
+        return !(constants.size() == 1 && constants.iterator().next() instanceof ArrayValue);
     }
 
     @NotNull
@@ -246,7 +248,7 @@ public class AnnotationResolver {
         for (ValueArgument argument : resolvedValueArgument.getArguments()) {
             JetExpression argumentExpression = argument.getArgumentExpression();
             if (argumentExpression != null) {
-                CompileTimeConstant<?> constant = resolveExpressionToCompileTimeValue(argumentExpression, expectedType, trace);
+                CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(argumentExpression, trace, expectedType);
                 if (constant instanceof IntegerValueTypeConstant) {
                     IntegerValueTypeConstructor typeConstructor = ((IntegerValueTypeConstant) constant).getValue();
                     JetType defaultType = getPrimitiveNumberType(typeConstructor, expectedType);
@@ -273,23 +275,6 @@ public class AnnotationResolver {
             }
         }
         return constants;
-    }
-
-    @Nullable
-    public static CompileTimeConstant<?> resolveExpressionToCompileTimeValue(
-            @NotNull JetExpression expression,
-            @NotNull JetType expectedType,
-            @NotNull BindingTrace trace
-    ) {
-        return ConstantExpressionEvaluator.object$.evaluate(expression, trace, expectedType);
-    }
-
-    @NotNull
-    public List<AnnotationDescriptor> getResolvedAnnotations(@Nullable JetModifierList modifierList, BindingTrace trace) {
-        if (modifierList == null) {
-            return Collections.emptyList();
-        }
-        return getResolvedAnnotations(modifierList.getAnnotationEntries(), trace);
     }
 
     @SuppressWarnings("MethodMayBeStatic")
