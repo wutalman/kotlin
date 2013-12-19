@@ -111,7 +111,7 @@ open class FunctionCallCase(override val callInfo: FunctionCallInfo) : CallCase<
 
 open class VariableAccessCase(override val callInfo: VariableAccessInfo) : CallCase<VariableAccessInfo> {
     protected fun VariableAccessInfo.getAccessFunctionName(): String {
-        return Namer.getNameForAccessor(propertyName.getIdent()!!, isGetAccess(), false)
+        return Namer.getNameForAccessor(variableName.getIdent()!!, isGetAccess(), false)
     }
 
     protected fun VariableAccessInfo.constructAccessExpression(ref: JsNameRef): JsExpression {
@@ -150,6 +150,7 @@ class CallCaseDispatcher<C : CallCase<I>, I : BaseCallInfo> {
 }
 
 trait DelegateIntrinsic<I : BaseCallInfo> : CallCase<I> {
+    fun I.canBeApply(): Boolean = true
     fun I.getReceiver(): JsExpression? {
         return when (resolvedCall.getExplicitReceiverKind()) {
             THIS_OBJECT -> thisObject
@@ -168,6 +169,9 @@ trait DelegateIntrinsic<I : BaseCallInfo> : CallCase<I> {
     }
 
     fun intrinsic(): JsExpression? {
-        return callInfo.intrinsic()
+        return if (callInfo.canBeApply())
+            callInfo.intrinsic()
+        else
+            null
     }
 }
