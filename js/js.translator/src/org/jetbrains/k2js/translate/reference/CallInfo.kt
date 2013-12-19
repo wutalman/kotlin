@@ -38,7 +38,6 @@ open class BaseCallInfo(
         val nullableReceiverForSafeCall: JsExpression?
 ) {
     val callableDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
-    val functionName = context.getNameForDescriptor(callableDescriptor)
 
     fun isExtension(): Boolean = receiverObject != null
     fun isMemberCall(): Boolean = thisObject != null
@@ -58,6 +57,8 @@ private open class CallInfoWrapper(callInfo: BaseCallInfo) :
 
 // if setTo == null, it is get access
 class VariableAccessInfo(callInfo: BaseCallInfo, private val setTo: JsExpression? = null): CallInfoWrapper(callInfo) {
+    val propertyName = context.getNameForDescriptor(callableDescriptor)
+
     fun isGetAccess(): Boolean = setTo == null
 
     fun getSetToExpression(): JsExpression {
@@ -69,6 +70,8 @@ class VariableAccessInfo(callInfo: BaseCallInfo, private val setTo: JsExpression
 }
 
 class FunctionCallInfo(callInfo: BaseCallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfoWrapper(callInfo) {
+    val functionName = context.getNameForDescriptor(callableDescriptor)
+
     fun hasSpreadOperator() : Boolean {
         return argumentsInfo.isHasSpreadOperator()
     }
