@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.psi.JetSuperExpression
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 
 
 open class BaseCallInfo(
@@ -37,7 +39,7 @@ open class BaseCallInfo(
         val receiverObject: JsExpression?,
         val nullableReceiverForSafeCall: JsExpression?
 ) {
-    val callableDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
+    open val callableDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
 
     fun isExtension(): Boolean = receiverObject != null
     fun isMemberCall(): Boolean = thisObject != null
@@ -57,7 +59,8 @@ private open class CallInfoWrapper(callInfo: BaseCallInfo) :
 
 // if setTo == null, it is get access
 class VariableAccessInfo(callInfo: BaseCallInfo, private val setTo: JsExpression? = null): CallInfoWrapper(callInfo) {
-    val propertyName = context.getNameForDescriptor(callableDescriptor)
+    val variableDescriptor = super.callableDescriptor as VariableDescriptor
+    val variableName = context.getNameForDescriptor(variableDescriptor)
 
     fun isGetAccess(): Boolean = setTo == null
 
