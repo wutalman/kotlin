@@ -102,13 +102,13 @@ public final class JavaPackageFragmentProviderImpl implements JavaPackageFragmen
     @NotNull
     @Override
     public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-        return ContainerUtil.<PackageFragmentDescriptor>createMaybeSingletonList(getOrCreatePackage(fqName));
+        return ContainerUtil.<PackageFragmentDescriptor>createMaybeSingletonList(getPackage(fqName));
     }
 
     @NotNull
     @Override
     public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
-        JavaPackageFragmentDescriptorImpl packageFragment = getOrCreatePackage(fqName);
+        JavaPackageFragmentDescriptorImpl packageFragment = getPackage(fqName);
         if (packageFragment == null) {
             return Collections.emptyList();
         }
@@ -118,7 +118,7 @@ public final class JavaPackageFragmentProviderImpl implements JavaPackageFragmen
 
     @Override
     @Nullable
-    public JavaPackageFragmentDescriptorImpl getOrCreatePackage(@NotNull final FqName fqName) {
+    public JavaPackageFragmentDescriptorImpl getPackage(@NotNull final FqName fqName) {
         if (packageFragments.containsKey(fqName)) {
             return packageFragments.get(fqName);
         }
