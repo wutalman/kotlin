@@ -227,9 +227,9 @@ public final class JavaFunctionResolver {
     @Nullable
     public static SamConstructorDescriptor resolveSamConstructor(@NotNull JavaPackageFragmentDescriptorImpl owner, @NotNull NamedMembers namedMembers) {
         if (namedMembers.getSamInterface() != null) {
-            JavaClassDescriptor klass = DescriptorResolverUtils.findClassInPackage(owner, namedMembers.getName());
-            if (klass != null) {
-                return createSamConstructorFunction(owner, klass);
+            ClassDescriptor klass = DescriptorResolverUtils.findClassInPackage(owner, namedMembers.getName());
+            if (klass instanceof JavaClassDescriptor) {
+                return createSamConstructorFunction(owner, (JavaClassDescriptor) klass);
             }
         }
         return null;

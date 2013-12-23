@@ -286,49 +286,13 @@ public final class DescriptorResolverUtils {
     // +-- package fragment Bar
     // We need to find class 'Baz' in fragment 'foo.Bar'.
     @Nullable
-    static JavaClassDescriptor findClassInPackage(@NotNull JavaPackageFragmentDescriptorImpl fragment, @NotNull Name name) {
-        // First, try to find in fragment directly
-        JavaClassDescriptor found = findClassInScope(fragment.getMemberScope(), name);
-        if (found != null) {
-            return found;
-        }
-
-        // If unsuccessful, try to find class of the same name as current (class 'foo.Bar')
-        JavaPackageFragmentDescriptorImpl parentPackage = getParentPackage(fragment);
-        if (parentPackage == null) {
-            return null;
-        }
-
-        // Calling recursively, looking for 'Bar' in 'foo'
-        ClassDescriptor classForCurrentPackage = findClassInPackage(parentPackage, fragment.getName());
-        if (classForCurrentPackage != null) {
-            // Try to find nested class 'Baz' in class 'foo.Bar'
-            return findClassInScope(DescriptorUtils.getStaticNestedClassesScope(classForCurrentPackage), name);
-        }
-
-        return null;
+    static ClassDescriptor findClassInPackage(@NotNull JavaPackageFragmentDescriptor fragment, @NotNull Name name) {
+        return fragment.getJavaDescriptorResolver().resolveClass(fragment.getFqName().child(name));
     }
 
     @Nullable
-    private static JavaPackageFragmentDescriptorImpl getParentPackage(@NotNull JavaPackageFragmentDescriptorImpl fragment) {
-        FqName fqName = fragment.getFqName();
-        if (fqName.isRoot()) {
-            return null;
-        }
-
-        JavaPackageFragmentDescriptorImpl parentPackage = fragment.getProvider().getOrCreatePackage(fqName.parent());
-        assert parentPackage != null : " couldn't find parent package for " + fragment;
-        return parentPackage;
-    }
-
-    @Nullable
-    public static JavaClassDescriptor getClassForCorrespondingJavaPackage(@NotNull JavaPackageFragmentDescriptorImpl fragment) {
-        JavaPackageFragmentDescriptorImpl parentPackage = getParentPackage(fragment);
-        if (parentPackage == null) {
-            return null;
-        }
-
-        return findClassInPackage(parentPackage, fragment.getFqName().shortName());
+    public static ClassDescriptor getClassForCorrespondingJavaPackage(@NotNull JavaPackageFragmentDescriptor fragment) {
+        return fragment.getJavaDescriptorResolver().resolveClass(fragment.getFqName());
     }
 
     @Nullable
