@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeProjectionImpl;
@@ -268,31 +267,6 @@ public final class DescriptorResolverUtils {
                                         new TypeProjectionImpl(originalToAltTypeParameter.getValue().getDefaultType()));
         }
         return TypeSubstitutor.create(typeSubstitutionContext);
-    }
-
-    @Nullable
-    private static JavaClassDescriptor findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
-        ClassifierDescriptor classifier = memberScope.getClassifier(name);
-        if (classifier instanceof JavaClassDescriptor) {
-            return (JavaClassDescriptor) classifier;
-        }
-        return null;
-    }
-
-    // E.g. we have foo.Bar.Baz class declared in Java. It will produce the following descriptors structure:
-    // package fragment foo
-    // +-- class Bar
-    // |    +-- class Baz
-    // +-- package fragment Bar
-    // We need to find class 'Baz' in fragment 'foo.Bar'.
-    @Nullable
-    static ClassDescriptor findClassInPackage(@NotNull JavaPackageFragmentDescriptor fragment, @NotNull Name name) {
-        return fragment.getJavaDescriptorResolver().resolveClass(fragment.getFqName().child(name));
-    }
-
-    @Nullable
-    public static ClassDescriptor getClassForCorrespondingJavaPackage(@NotNull JavaPackageFragmentDescriptor fragment) {
-        return fragment.getJavaDescriptorResolver().resolveClass(fragment.getFqName());
     }
 
     @Nullable
