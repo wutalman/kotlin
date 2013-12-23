@@ -36,6 +36,11 @@ public class K2JvmCliTest extends CliBaseTest {
     }
 
     @Test
+    public void classpath() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
     public void nonExistingClassPathAndAnnotationsPath() throws Exception {
         executeCompilerCompareOutputJVM();
 
