@@ -69,6 +69,9 @@ class DefaultCallCase(callInfo: FunctionCallInfo): FunctionCallCase(callInfo) { 
             val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, qualifierForFunction))
             return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
         }
+        if (isNative()) {
+            return JsInvocation(JsNameRef(functionName, receiverObject), argumentsInfo.getTranslateArguments())
+        }
         val functionCall = JsNameRef(functionName, qualifierForFunction) // TODO: remake to call
         return JsInvocation(functionCall, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }
