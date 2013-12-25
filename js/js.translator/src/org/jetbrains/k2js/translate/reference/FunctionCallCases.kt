@@ -56,7 +56,7 @@ class DefaultCallCase(callInfo: FunctionCallInfo): FunctionCallCase(callInfo) { 
     override fun FunctionCallInfo.thisObject(): JsExpression {
         if (isNative() && hasSpreadOperator()) {
             val cachedReceiver = argumentsInfo.getCachedReceiver()!!
-            val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, cachedReceiver.assignmentExpression()))
+            val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(functionName, cachedReceiver.assignmentExpression()))
             return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
         }
         val functionRef = JsNameRef(functionName, thisObject!!)
@@ -67,7 +67,7 @@ class DefaultCallCase(callInfo: FunctionCallInfo): FunctionCallCase(callInfo) { 
     override fun FunctionCallInfo.receiverArgument(): JsExpression {
         val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
         if (isNative() && hasSpreadOperator()) {
-            val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, qualifierForFunction))
+            val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(functionName, qualifierForFunction))
             return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
         }
         if (isNative()) {
@@ -79,7 +79,7 @@ class DefaultCallCase(callInfo: FunctionCallInfo): FunctionCallCase(callInfo) { 
     override fun FunctionCallInfo.noReceivers(): JsExpression {
         val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
         if (isNative() && hasSpreadOperator()) {
-            val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, qualifierForFunction))
+            val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(functionName, qualifierForFunction))
             return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
         }
         val functionCall = JsNameRef(functionName, qualifierForFunction)
