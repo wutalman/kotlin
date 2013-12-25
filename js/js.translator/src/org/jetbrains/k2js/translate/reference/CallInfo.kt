@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetSuperExpression
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import com.google.dart.compiler.backend.js.ast.JsName
 
 
 open class BaseCallInfo(
@@ -60,7 +61,10 @@ private open class CallInfoWrapper(callInfo: BaseCallInfo) :
 // if setTo == null, it is get access
 class VariableAccessInfo(callInfo: BaseCallInfo, private val setTo: JsExpression? = null): CallInfoWrapper(callInfo) {
     val variableDescriptor = super.callableDescriptor as VariableDescriptor
-    val variableName = context.getNameForDescriptor(variableDescriptor)
+    val variableName : JsName
+        get() {
+            return context.getNameForDescriptor(variableDescriptor)
+        }
 
     fun isGetAccess(): Boolean = setTo == null
 
@@ -73,7 +77,10 @@ class VariableAccessInfo(callInfo: BaseCallInfo, private val setTo: JsExpression
 }
 
 class FunctionCallInfo(callInfo: BaseCallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfoWrapper(callInfo) {
-    val functionName = context.getNameForDescriptor(callableDescriptor)
+    val functionName : JsName
+        get() { // getter, because for several descriptors name is undefined. Example: {(a) -> a+1}(3)
+            return context.getNameForDescriptor(callableDescriptor)
+        }
 
     fun hasSpreadOperator() : Boolean {
         return argumentsInfo.isHasSpreadOperator()

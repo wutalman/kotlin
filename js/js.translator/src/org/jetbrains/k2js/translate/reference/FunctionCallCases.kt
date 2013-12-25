@@ -141,9 +141,10 @@ class ExpressionAsFunctionDescriptorIntrinsic(callInfo: FunctionCallInfo) : Func
 fun createFunctionCases(): CallCaseDispatcher<FunctionCallCase, FunctionCallInfo> {
     val caseDispatcher = CallCaseDispatcher<FunctionCallCase, FunctionCallInfo>()
 
-    caseDispatcher.addCase { DelegateFunctionIntrinsic(it).intrinsic() }
-    caseDispatcher.addCase(::InvokeIntrinsic) {InvokeIntrinsic.canApply(it)}
     caseDispatcher.addCase(::ExpressionAsFunctionDescriptorIntrinsic) {ExpressionAsFunctionDescriptorIntrinsic.canApply(it)}
+    caseDispatcher.addCase(::InvokeIntrinsic) {InvokeIntrinsic.canApply(it)}
+
+    caseDispatcher.addCase { DelegateFunctionIntrinsic(it).intrinsic() }
 
     caseDispatcher.addCase(::ConstructorCallCase) {it.callableDescriptor is ConstructorDescriptor}
 
