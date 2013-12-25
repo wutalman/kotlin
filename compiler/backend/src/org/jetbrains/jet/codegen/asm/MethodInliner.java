@@ -116,9 +116,9 @@ public class MethodInliner {
                 else if (isLambdaConstructorCall(owner, name)) { //TODO add method
                     ConstructorInvocation invocation = constructorInvocation.remove(0);
                     if (invocation.isInlinable()) {
-                        LambdaTransformer transformer = new LambdaTransformer(invocation, parent.subInline(parent.nameGenerator));
+                        LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(), parent.subInline(parent.nameGenerator));
 
-                        transformer.doTransform();
+                        transformer.doTransform(invocation);
                         //TODO regenerate class
                     } else {
                         super.visitMethodInsn(opcode, owner, name, desc);

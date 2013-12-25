@@ -44,12 +44,10 @@ public class LambdaTransformer extends InlineTransformer {
 
     private final MethodNode invoke;
 
-    private final ConstructorInvocation invocation;
-    private InliningInfo info;
+    private final InliningInfo info;
 
     private final Map<String, Integer> paramMapping = new HashMap<String, Integer>();
 
-    private final String lambdaClass;
     private final Type oldLambdaType;
 
     private MethodNode transformedConstructor;
@@ -63,24 +61,22 @@ public class LambdaTransformer extends InlineTransformer {
     private String superName;
     private String[] interfaces;
 
-    public LambdaTransformer(ConstructorInvocation invocation, InliningInfo info) {
+    public LambdaTransformer(String lambdaInternalName, InliningInfo info) {
         super(info.state);
-        this.invocation = invocation;
         this.info = info;
-        this.lambdaClass = invocation.getOwnerInternalName();
-        oldLambdaType = Type.getObjectType(lambdaClass);
+        this.oldLambdaType = Type.getObjectType(lambdaInternalName);
         newLambdaType = Type.getObjectType(info.nameGenerator.genLambdaClassName());
 
         //try to find just compiled classes then in dependencies
         ClassReader reader;
         try {
-            OutputFile outputFile = state.getFactory().get(invocation.getOwnerInternalName() + ".class");
+            OutputFile outputFile = state.getFactory().get(lambdaInternalName + ".class");
             if (outputFile != null) {
                 reader = new ClassReader(outputFile.asByteArray());
             } else {
-                VirtualFile file = InlineCodegenUtil.findVirtualFile(state.getProject(), new FqName(invocation.getOwnerInternalName()), false);
+                VirtualFile file = InlineCodegenUtil.findVirtualFile(state.getProject(), new FqName(lambdaInternalName), false);
                 if (file == null) {
-                    throw new RuntimeException("Couldn't find virtual file for " + invocation.getOwnerInternalName());
+                    throw new RuntimeException("Couldn't find virtual file for " + lambdaInternalName);
                 }
                 reader = new ClassReader(file.getInputStream());
             }
@@ -103,8 +99,7 @@ public class LambdaTransformer extends InlineTransformer {
         builder.addThis(oldLambdaType, false);
 
         Type[] types = Type.getArgumentTypes(invoke.desc);
-        for (int i = 0; i < types.length; i++) {
-            Type type = types[i];
+        for (Type type : types) {
             builder.addNextParameter(type, false, null);
         }
     }
@@ -115,7 +110,7 @@ public class LambdaTransformer extends InlineTransformer {
                 .transformCaptured(invokeNode, builder.buildParameters(), oldLambdaType, true);
     }
 
-    public void doTransform() {
+    public void doTransform(ConstructorInvocation invocation) {
         PsiElement element = BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), info.startFunction);
         assert element != null : "Couldn't find declaration for " + info.startFunction;
 
@@ -130,17 +125,27 @@ public class LambdaTransformer extends InlineTransformer {
                                  interfaces
         );
 
-        MethodVisitor visitor = classBuilder.newMethod(
+        MethodVisitor invokeVisitor = newMethod(classBuilder, invoke);
+        invokeVisitor.visitMaxs(-1, -1);
+
+        MethodVisitor constructorVisitor = newMethod(classBuilder, constructor);
+        constructor.accept(constructorVisitor);
+        constructorVisitor.visitMaxs(-1, -1);
+
+        classBuilder.done();
+    }
+
+    private MethodVisitor newMethod(ClassBuilder builder, MethodNode original) {
+        MethodVisitor visitor = builder.newMethod(
                 null,
-                invoke.access,
-                invoke.name,
-                invoke.desc,
-                invoke.signature,
+                original.access,
+                original.name,
+                original.desc,
+                original.signature,
                 null //TODO: change signature to list
         );
 
-        visitor.visitMaxs(-1, -1);
-        classBuilder.done();
+        return visitor;
     }
 
     private void extractParametersMapping(MethodNode constructor, ParametersBuilder builder) {
@@ -183,7 +188,7 @@ public class LambdaTransformer extends InlineTransformer {
         }, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 
         if (methodNode[0] == null) {
-            throw new RuntimeException("Couldn't find '" + methodName + "' method of lambda class " + invocation.getOwnerInternalName());
+            throw new RuntimeException("Couldn't find '" + methodName + "' method of lambda class " + oldLambdaType.getInternalName());
         }
 
         return methodNode[0];
