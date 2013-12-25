@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor
 import org.jetbrains.k2js.translate.utils.TranslationUtils
 import org.jetbrains.k2js.translate.general.Translation
 import org.jetbrains.k2js.translate.utils.PsiUtils
+import com.google.dart.compiler.backend.js.ast.JsLiteral
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>) : List<JsExpression> {
     if (arguments.isEmpty())
@@ -141,6 +142,21 @@ class ExpressionAsFunctionDescriptorIntrinsic(callInfo: FunctionCallInfo) : Func
 
     }
 }
+
+class SuperCallCase(callInfo: FunctionCallInfo) : FunctionCallCase(callInfo) {
+    class object {
+        fun canApply(callInfo: FunctionCallInfo): Boolean {
+            return callInfo.isSuperInvocation()
+        }
+    }
+
+    override fun FunctionCallInfo.thisObject(): JsExpression { // TODO: spread operator
+        val prototypeClass = JsNameRef(Namer.getPrototypeName(), thisObject!!)
+        val functionRef =  Namer.getFunctionCallRef(JsNameRef(functionName, prototypeClass))
+        return JsInvocation(functionRef, addReceiverToArgs(JsLiteral.THIS, argumentsInfo.getTranslateArguments()))
+    }
+}
+
 fun createFunctionCases(): CallCaseDispatcher<FunctionCallCase, FunctionCallInfo> {
     val caseDispatcher = CallCaseDispatcher<FunctionCallCase, FunctionCallInfo>()
 
@@ -150,6 +166,7 @@ fun createFunctionCases(): CallCaseDispatcher<FunctionCallCase, FunctionCallInfo
     caseDispatcher.addCase { DelegateFunctionIntrinsic(it).intrinsic() }
 
     caseDispatcher.addCase(::ConstructorCallCase) {it.callableDescriptor is ConstructorDescriptor}
+    caseDispatcher.addCase(::SuperCallCase) {SuperCallCase.canApply(it)}
 
     caseDispatcher.addCase(::DefaultCallCase) { true } // TODO: fix this
     return caseDispatcher
