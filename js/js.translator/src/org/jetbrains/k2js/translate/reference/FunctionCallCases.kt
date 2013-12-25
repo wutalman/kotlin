@@ -25,6 +25,13 @@ import org.jetbrains.k2js.translate.context.Namer
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
+import com.google.dart.compiler.backend.js.ast.JsNew
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor
+import org.jetbrains.k2js.translate.utils.TranslationUtils
+import org.jetbrains.k2js.translate.general.Translation
+import org.jetbrains.k2js.translate.utils.PsiUtils
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>) : List<JsExpression> {
     if (arguments.isEmpty())
@@ -57,7 +64,7 @@ class DefaultCallCase(callInfo: FunctionCallInfo): FunctionCallCase(callInfo) { 
 
     // TODO: refactor after fix ArgumentsInfo - duplicate code
     override fun FunctionCallInfo.receiverArgument(): JsExpression {
-        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)!!
+        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
         if (isNative() && hasSpreadOperator()) {
             val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, qualifierForFunction))
             return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
@@ -66,7 +73,7 @@ class DefaultCallCase(callInfo: FunctionCallInfo): FunctionCallCase(callInfo) { 
         return JsInvocation(functionCall, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }
     override fun FunctionCallInfo.noReceivers(): JsExpression {
-        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)!!
+        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
         if (isNative() && hasSpreadOperator()) {
             val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, qualifierForFunction))
             return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
@@ -86,10 +93,59 @@ class DelegateFunctionIntrinsic(callInfo: FunctionCallInfo) : FunctionCallCase(c
     }
 }
 
+class InvokeIntrinsic(callInfo: FunctionCallInfo) : FunctionCallCase(callInfo) {
+    class object {
+        fun canApply(callInfo: FunctionCallInfo): Boolean {
+            if (!callInfo.callableDescriptor.getName().asString().equals("invoke"))
+                return false
+            val parameterCount = callInfo.callableDescriptor.getValueParameters().size()
+            val funDeclaration = callInfo.callableDescriptor.getContainingDeclaration()
+            return funDeclaration == ((if (callInfo.callableDescriptor.getReceiverParameter() == null)
+                KotlinBuiltIns.getInstance().getFunction(parameterCount)
+            else
+                KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount)))
+        }
+    }
+
+    override fun FunctionCallInfo.thisObject(): JsExpression {
+        return JsInvocation(thisObject, argumentsInfo.getTranslateArguments())
+    }
+    override fun FunctionCallInfo.bothReceivers(): JsExpression {
+        return JsInvocation(thisObject, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
+    }
+}
+
+class ConstructorCallCase(callInfo: FunctionCallInfo) : FunctionCallCase(callInfo) {
+
+    override fun FunctionCallInfo.noReceivers(): JsExpression {
+        return JsNew(context.getQualifiedReference(callableDescriptor), argumentsInfo.getTranslateArguments())
+    }
+}
+
+class ExpressionAsFunctionDescriptorIntrinsic(callInfo: FunctionCallInfo) : FunctionCallCase(callInfo) {
+    class object {
+        fun canApply(callInfo: FunctionCallInfo): Boolean {
+            return callInfo.callableDescriptor is ExpressionAsFunctionDescriptor
+        }
+    }
+
+    override fun FunctionCallInfo.noReceivers(): JsExpression {
+        if (callableDescriptor !is ExpressionAsFunctionDescriptor) {
+            throw IllegalStateException("callableDescriptor must be ExpressionAsFunctionDescriptor $callInfo")
+        }
+        val funRef = Translation.translateAsExpression(callableDescriptor.getExpression()!!, context)
+        return JsInvocation(funRef, argumentsInfo.getTranslateArguments())
+
+    }
+}
 fun createFunctionCases(): CallCaseDispatcher<FunctionCallCase, FunctionCallInfo> {
     val caseDispatcher = CallCaseDispatcher<FunctionCallCase, FunctionCallInfo>()
 
     caseDispatcher.addCase { DelegateFunctionIntrinsic(it).intrinsic() }
+    caseDispatcher.addCase(::InvokeIntrinsic) {InvokeIntrinsic.canApply(it)}
+    caseDispatcher.addCase(::ExpressionAsFunctionDescriptorIntrinsic) {ExpressionAsFunctionDescriptorIntrinsic.canApply(it)}
+
+    caseDispatcher.addCase(::ConstructorCallCase) {it.callableDescriptor is ConstructorDescriptor}
 
     caseDispatcher.addCase(::DefaultCallCase) { true } // TODO: fix this
     return caseDispatcher

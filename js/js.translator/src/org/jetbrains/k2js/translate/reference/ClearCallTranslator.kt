@@ -57,7 +57,10 @@ private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out Function
             return buildCall(resolvedCall.getFunctionCall(), newReceiver, null)
         } else {
             val newReceiver2 = buildGet(variableCall, null)
-            return buildCall(resolvedCall.getFunctionCall(), receiver1, newReceiver2)
+            if (receiver1 == null)
+                return buildCall(resolvedCall.getFunctionCall(), newReceiver2)
+            else
+                return buildCall(resolvedCall.getFunctionCall(), receiver1, newReceiver2)
         }
     }
 
