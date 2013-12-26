@@ -20,24 +20,38 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.*;
+import org.jetbrains.asm4.ClassReader;
+import org.jetbrains.asm4.ClassVisitor;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.asm4.tree.*;
+import org.jetbrains.asm4.tree.AbstractInsnNode;
+import org.jetbrains.asm4.tree.FieldInsnNode;
+import org.jetbrains.asm4.tree.MethodNode;
+import org.jetbrains.asm4.tree.VarInsnNode;
 import org.jetbrains.jet.OutputFile;
-import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.codegen.context.MethodContext;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
+import org.jetbrains.jet.codegen.AsmUtil;
+import org.jetbrains.jet.codegen.ClassBuilder;
+import org.jetbrains.jet.codegen.ClosureCodegen;
+import org.jetbrains.jet.codegen.FieldInfo;
+import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.V1_6;
 
-public class LambdaTransformer extends InlineTransformer {
+public class LambdaTransformer {
+
+    protected final GenerationState state;
+
+    protected final JetTypeMapper typeMapper;
 
     private final MethodNode constructor;
 
@@ -57,7 +71,8 @@ public class LambdaTransformer extends InlineTransformer {
     private String[] interfaces;
 
     public LambdaTransformer(String lambdaInternalName, InliningInfo info) {
-        super(info.state);
+        this.state = info.state;
+        this.typeMapper = state.getTypeMapper();
         this.info = info;
         this.oldLambdaType = Type.getObjectType(lambdaInternalName);
         newLambdaType = Type.getObjectType(info.nameGenerator.genLambdaClassName());
@@ -231,60 +246,6 @@ public class LambdaTransformer extends InlineTransformer {
         }
 
         return methodNode[0];
-    }
-
-    public void calculatedDataForTransformation() {
-
-    }
-
-    @Override
-    public void inlineCall(CallableMethod callableMethod, ClassVisitor visitor) {
-
-    }
-
-    @Override
-    public void putInLocal(
-            Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor
-    ) {
-
-    }
-
-    @Override
-    public boolean shouldPutValue(
-            Type type, StackValue stackValue, MethodContext context, ValueParameterDescriptor descriptor
-    ) {
-        assert false;
-        return false;
-    }
-
-    @Override
-    public void putHiddenParams() {
-        assert false;
-    }
-
-    @Override
-    public void leaveTemps() {
-        assert false;
-    }
-
-    @Override
-    public boolean isInliningClosure(
-            JetExpression expression, ValueParameterDescriptor valueParameterDescriptora
-    ) {
-        assert false;
-        return false;
-    }
-
-    @Override
-    public void rememberClosure(JetFunctionLiteralExpression expression, Type type) {
-
-    }
-
-    @Override
-    public void putCapturedInLocal(
-            Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor, int index
-    ) {
-
     }
 
     public Type getNewLambdaType() {
