@@ -220,6 +220,16 @@ public final class StaticContext {
     private final class NameGenerator extends Generator<JsName> {
 
         public NameGenerator() {
+            Rule<JsName> specialNamesToTemporary = new Rule<JsName>() {
+                @Nullable
+                @Override
+                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!descriptor.getName().isSpecial())
+                        return null;
+                    JsScope scope = getEnclosingScope(descriptor);
+                    return scope.declareTemporary();
+                }
+            };
             Rule<JsName> namesForStandardClasses = new Rule<JsName>() {
                 @Override
                 @Nullable
@@ -363,6 +373,7 @@ public final class StaticContext {
             addRule(propertyOrPropertyAccessor);
             addRule(predefinedObjectsHasUnobfuscatableNames);
             addRule(overridingDescriptorsReferToOriginalName);
+            addRule(specialNamesToTemporary);
             addRule(memberDeclarationsInsideParentsScope);
         }
     }
