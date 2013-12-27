@@ -58,16 +58,8 @@ trait CallInfo {
     // TODO: toString for debug
 }
 
-private open class CallInfoWrapper(callInfo: CallInfo): CallInfo {
-    override val context: TranslationContext = callInfo.context
-    override val resolvedCall: ResolvedCall<out CallableDescriptor> = callInfo.resolvedCall
-    override val thisObject: JsExpression? = callInfo.thisObject
-    override val receiverObject: JsExpression? = callInfo.receiverObject
-    override val nullableReceiverForSafeCall: JsExpression? = callInfo.nullableReceiverForSafeCall
-}
-
 // if setTo == null, it is get access
-class VariableAccessInfo(callInfo: CallInfo, private val setTo: JsExpression? = null): CallInfoWrapper(callInfo) {
+class VariableAccessInfo(callInfo: CallInfo, private val setTo: JsExpression? = null): CallInfo by callInfo {
     val variableDescriptor = super.callableDescriptor as VariableDescriptor
     val variableName : JsName
         get() {
@@ -84,7 +76,7 @@ class VariableAccessInfo(callInfo: CallInfo, private val setTo: JsExpression? = 
     }
 }
 
-class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfoWrapper(callInfo) {
+class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfo by callInfo {
     val functionName : JsName
         get() { // getter, because for several descriptors name is undefined. Example: {(a) -> a+1}(3)
             return context.getNameForDescriptor(callableDescriptor)
