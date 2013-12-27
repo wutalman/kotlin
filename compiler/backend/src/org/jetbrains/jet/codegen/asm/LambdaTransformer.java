@@ -40,10 +40,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.V1_6;
 
@@ -144,10 +141,9 @@ public class LambdaTransformer {
             }
         }
 
-        List<Pair<String, Type>> captured = newConstructorSignature;
         List<FieldInfo> fields = AsmUtil.transformCapturedParams(newConstructorSignature, newLambdaType);
 
-        AsmUtil.genClosureFields(captured, classBuilder);
+        AsmUtil.genClosureFields(newConstructorSignature, classBuilder);
 
         Method newConstructor = ClosureCodegen.generateConstructor(classBuilder, fields, null, Type.getObjectType(superName), state);
         invocation.setNewConstructorDescriptor(newConstructor.getDescriptor());
@@ -167,7 +163,7 @@ public class LambdaTransformer {
     }
 
     private MethodVisitor newMethod(ClassBuilder builder, MethodNode original) {
-        MethodVisitor visitor = builder.newMethod(
+        return builder.newMethod(
                 null,
                 original.access,
                 original.name,
@@ -175,8 +171,6 @@ public class LambdaTransformer {
                 original.signature,
                 null //TODO: change signature to list
         );
-
-        return visitor;
     }
 
     private void extractParametersMapping(MethodNode constructor, ParametersBuilder builder, ConstructorInvocation invocation) {
@@ -191,7 +185,6 @@ public class LambdaTransformer {
                 VarInsnNode previous = (VarInsnNode) fieldNode.getPrevious();
                 int varIndex = previous.var;
                 paramMapping.put(fieldNode.name, varIndex);
-                System.out.println(fieldNode.name + " "  + varIndex);
 
                 CapturedParamInfo info = builder.addCapturedParam(fieldNode.name, Type.getType(fieldNode.desc), false, null);
                 InlinableAccess access = indexToLambda.get(varIndex);
@@ -206,7 +199,7 @@ public class LambdaTransformer {
             cur = cur.getNext();
         }
 
-        ArrayList recaptured = new ArrayList();
+        List<CapturedParamInfo> recaptured = new ArrayList<CapturedParamInfo>();
         for (LambdaInfo info : additionalCaptured) {
             List<CapturedParamInfo> vars = info.getCapturedVars();
             for (CapturedParamInfo var : vars) {
