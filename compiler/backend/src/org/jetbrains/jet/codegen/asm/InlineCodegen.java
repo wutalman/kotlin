@@ -65,7 +65,8 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
     private final GenerationState state;
 
     private final boolean disabled;
-    private Call call;
+
+    private final Call call;
 
     private final SimpleFunctionDescriptor functionDescriptor;
 
@@ -81,7 +82,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     private LambdaInfo activeLambda;
 
-    protected final List<ParameterInfo> tempTypes = new ArrayList();
+    protected final List<ParameterInfo> tempTypes = new ArrayList<ParameterInfo>();
 
     protected final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
 
@@ -176,7 +177,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
     private void inlineCall(MethodNode node) {
         generateClosuresBodies();
 
-        ArrayList realParams = new ArrayList(tempTypes);
+        List<ParameterInfo> realParams = new ArrayList<ParameterInfo>(tempTypes);
 
         putClosureParametersOnStack();
 
@@ -369,7 +370,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     private List<CapturedParamInfo> getAllCaptured() {
         //TODO: SORT
-        ArrayList result = new ArrayList();
+        List<CapturedParamInfo> result = new ArrayList<CapturedParamInfo>();
         for (LambdaInfo next : expressionMap.values()) {
             if (next.closure != null) {
                 result.addAll(next.getCapturedVars());

@@ -321,8 +321,7 @@ public class MethodInliner {
                 }
             }
         } else {
-            for (int i = 0; i < types.length; i++) {
-                Type type = types[i];
+            for (Type type : types) {
                 int paramIndex = index++;
                 result.add(new ParameterInfo(type, false, -1, paramIndex));
                 if (type.getSize() == 2) {
@@ -370,7 +369,7 @@ public class MethodInliner {
             @NotNull Type lambdaClassType,
             @NotNull LambdaFieldRemapper lambdaFieldRemapper
     ) {
-        ArrayList capturedFields = new ArrayList();
+        List<FieldAccess> capturedFields = new ArrayList<FieldAccess>();
 
         //remove all this and shift all variables to captured ones size
         AbstractInsnNode cur = node.instructions.getFirst();
@@ -432,7 +431,7 @@ public class MethodInliner {
         return capturedFields;
     }
 
-    public static AbstractInsnNode getPreviousNoLableNoLine(AbstractInsnNode cur) {
+    public static AbstractInsnNode getPreviousNoLabelNoLine(AbstractInsnNode cur) {
         AbstractInsnNode prev = cur.getPrevious();
         while (prev.getType() == AbstractInsnNode.LABEL || prev.getType() == AbstractInsnNode.LINE) {
             prev = prev.getPrevious();
