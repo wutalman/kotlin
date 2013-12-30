@@ -346,14 +346,16 @@ public class DeclarationResolver {
         }
     }
 
-    private Collection<PsiElement> getDeclarationsByDescriptor(DeclarationDescriptor declarationDescriptor) {
+    @NotNull
+    private Collection<PsiElement> getDeclarationsByDescriptor(@NotNull DeclarationDescriptor declarationDescriptor) {
         Collection<PsiElement> declarations;
         if (declarationDescriptor instanceof PackageViewDescriptor) {
             final PackageViewDescriptor aPackage = (PackageViewDescriptor)declarationDescriptor;
             Collection<JetFile> files = trace.get(BindingContext.PACKAGE_TO_FILES, aPackage.getFqName());
 
             if (files == null) {
-                throw new IllegalStateException("declarations corresponding to " + aPackage + " are not found");
+                return Collections.emptySet();
+                // throw new IllegalStateException("declarations corresponding to " + aPackage + " are not found");
             }
 
             declarations = Collections2.transform(files, new Function<JetFile, PsiElement>() {
