@@ -32,7 +32,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -118,6 +121,14 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         try {
             if (USE_LAZY) {
                 CancelableResolveSession session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) classOrObject.getContainingFile());
+
+                if (JetPsiUtil.isLocal(classOrObject)) {
+                    BindingContext bindingContext = session.resolveToElement(classOrObject);
+                    forceResolveAllContents(bindingContext.get(BindingContext.CLASS, classOrObject));
+
+                    return new LightClassConstructionContext(bindingContext, null);
+                }
+
                 forceResolveAllContents(session.getClassDescriptor(classOrObject));
                 return new LightClassConstructionContext(session.getBindingContext(), null);
             }
