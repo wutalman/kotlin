@@ -20,10 +20,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.ClassReader;
-import org.jetbrains.asm4.ClassVisitor;
-import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.*;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.tree.AbstractInsnNode;
 import org.jetbrains.asm4.tree.FieldInsnNode;
@@ -53,6 +51,8 @@ public class LambdaTransformer {
     private final MethodNode constructor;
 
     private final MethodNode invoke;
+
+    private final MethodNode bridge;
 
     private final InliningInfo info;
 
@@ -92,8 +92,9 @@ public class LambdaTransformer {
             throw new RuntimeException(e);
         }
 
-        constructor = getMethodNode(reader, "<init>");
-        invoke = getMethodNode(reader, "invoke");
+        constructor = getMethodNode(reader, "<init>", false);
+        invoke = getMethodNode(reader, "invoke", false);
+        bridge = getMethodNode(reader, "invoke", true);
     }
 
     private void buildInvokeParams(ParametersBuilder builder) {
@@ -126,6 +127,10 @@ public class LambdaTransformer {
         invokeVisitor.visitMaxs(-1, -1);
 
         generateConstructorAndFields(classBuilder, builder, invocation);
+
+        if (bridge != null) {
+            //bridge.accept(classBuilder.getVisitor());
+        }
 
         classBuilder.done();
 
@@ -211,7 +216,8 @@ public class LambdaTransformer {
         invocation.setRecaptured(recaptured);
     }
 
-    public MethodNode getMethodNode(ClassReader reader, final String methodName) {
+    @Nullable
+    public MethodNode getMethodNode(@NotNull ClassReader reader, @NotNull final String methodName, final boolean findBridge) {
         final MethodNode[] methodNode = new MethodNode[1];
         reader.accept(new ClassVisitor(InlineCodegenUtil.API) {
 
@@ -226,7 +232,7 @@ public class LambdaTransformer {
 
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                if (methodName.equals(name)) {
+                if (methodName.equals(name) && ((access & Opcodes.ACC_BRIDGE) == (findBridge ? Opcodes.ACC_BRIDGE : 0))) {
                     assert methodNode[0] == null;
                     return methodNode[0] = new MethodNode(access, name, desc, signature, exceptions);
                 }
@@ -234,7 +240,7 @@ public class LambdaTransformer {
             }
         }, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 
-        if (methodNode[0] == null) {
+        if (methodNode[0] == null && !findBridge) {
             throw new RuntimeException("Couldn't find '" + methodName + "' method of lambda class " + oldLambdaType.getInternalName());
         }
 
