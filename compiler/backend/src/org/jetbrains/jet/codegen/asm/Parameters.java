@@ -64,7 +64,7 @@ public class Parameters implements Iterable<ParameterInfo> {
                     new CapturedParamInfo(capturedParamInfo.getFieldName(), capturedParamInfo.getType(), capturedParamInfo.isSkipped,
                                           capturedParamInfo.getIndex(), result.size() + realSize);
 
-            newInfo.setLambda(newInfo.getLambda());
+            newInfo.setLambda(capturedParamInfo.getLambda());
 
             result.add(newInfo);
 
