@@ -92,9 +92,9 @@ public class LambdaTransformer {
             throw new RuntimeException(e);
         }
 
-        constructor = getMethodNode(reader, "<init>", false);
-        invoke = getMethodNode(reader, "invoke", false);
-        bridge = getMethodNode(reader, "invoke", true);
+        constructor = getMethodNode(reader, true, false);
+        invoke = getMethodNode(reader, false, false);
+        bridge = getMethodNode(reader, false, true);
     }
 
     private void buildInvokeParams(ParametersBuilder builder) {
@@ -217,7 +217,7 @@ public class LambdaTransformer {
     }
 
     @Nullable
-    public MethodNode getMethodNode(@NotNull ClassReader reader, @NotNull final String methodName, final boolean findBridge) {
+    public MethodNode getMethodNode(@NotNull ClassReader reader, final boolean findConstructor, final boolean findBridge) {
         final MethodNode[] methodNode = new MethodNode[1];
         reader.accept(new ClassVisitor(InlineCodegenUtil.API) {
 
@@ -232,8 +232,9 @@ public class LambdaTransformer {
 
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                if (methodName.equals(name) && ((access & Opcodes.ACC_BRIDGE) == (findBridge ? Opcodes.ACC_BRIDGE : 0))) {
-                    assert methodNode[0] == null;
+                boolean isConstructorMethod = "<init>".equals(name);
+                if (findConstructor && isConstructorMethod || (!findConstructor && !isConstructorMethod && ((access & Opcodes.ACC_BRIDGE) == (findBridge ? Opcodes.ACC_BRIDGE : 0)))) {
+                    assert methodNode[0] == null : "Wrong lambda/sam structure: " + methodNode[0].name + " conflicts with " + name;
                     return methodNode[0] = new MethodNode(access, name, desc, signature, exceptions);
                 }
                 return null;
@@ -241,7 +242,7 @@ public class LambdaTransformer {
         }, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 
         if (methodNode[0] == null && !findBridge) {
-            throw new RuntimeException("Couldn't find '" + methodName + "' method of lambda class " + oldLambdaType.getInternalName());
+            throw new RuntimeException("Couldn't find operation method of lambda/sam class " + oldLambdaType.getInternalName());
         }
 
         return methodNode[0];
