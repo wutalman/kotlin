@@ -2108,7 +2108,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean disable = false;
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
         boolean isInline = descriptor instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) descriptor).isInline();
-        Inliner inliner = !isInline
+        Inliner inliner = !isInline || tailRecursionCodegen.isTailRecursion(resolvedCall)
                           ? Inliner.NOT_INLINE
                           : new InlineCodegen(this, true, state, disable, (SimpleFunctionDescriptor) callableMethod.getFunctionDescriptor());
 
@@ -2149,6 +2149,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             callableMethod = new CallableMethod(Type.getObjectType("jet/InlineRuntime"), null, null,
                                                 CodegenUtil.erasedInvokeSignature(callableMethod.getFunctionDescriptor(), typeMapper, true),
                                                 INVOKESTATIC, null, null, null);
+        }
+
+        if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {
+            tailRecursionCodegen.generateTailRecursion(resolvedCall);
+            return;
         }
 
         if (mask == 0) {
@@ -2658,7 +2663,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @NotNull
         private ReceiverValue computeAndSaveReceiver(
-                @NotNull JvmMethodSignature signature, 
+                @NotNull JvmMethodSignature signature,
                 @NotNull ExpressionCodegen codegen,
                 @Nullable ReceiverParameterDescriptor receiver
         ) {
