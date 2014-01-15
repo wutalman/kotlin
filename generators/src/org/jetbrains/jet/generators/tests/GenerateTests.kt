@@ -83,6 +83,7 @@ import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterBasicTest
 import org.jetbrains.jet.plugin.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.jet.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.jet.completion.handlers.AbstractSmartCompletionHandlerTest
+import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -385,6 +386,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractReferenceResolveWithLibTest>()) {
             model("resolve/referenceWithLib", recursive = false)
+        }
+
+        testClass(javaClass<AbstractReferenceResolveInLibrarySourcesTest>()) {
+            model("resolve/referenceInLib", recursive = false)
         }
 
         testClass(javaClass<AbstractJetFindUsagesTest>()) {
