@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.io.IOException;
 import java.util.*;
 
+import static org.jetbrains.asm4.Opcodes.ASM4;
 import static org.jetbrains.asm4.Opcodes.V1_6;
 
 public class LambdaTransformer {
@@ -130,7 +131,17 @@ public class LambdaTransformer {
         generateConstructorAndFields(classBuilder, builder, invocation);
 
         if (bridge != null) {
-            //bridge.accept(classBuilder.getVisitor());
+            MethodVisitor invokeBridge = newMethod(classBuilder, bridge);
+            bridge.accept(new MethodVisitor(ASM4, invokeBridge) {
+                @Override
+                public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+                    if (owner.equals(oldLambdaType.getInternalName())) {
+                        super.visitMethodInsn(opcode, newLambdaType.getInternalName(), name, desc);
+                    } else {
+                        super.visitMethodInsn(opcode, owner, name, desc);
+                    }
+                }
+            });
         }
 
         classBuilder.done();
