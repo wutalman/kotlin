@@ -117,11 +117,8 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
     }
 
     private static boolean isAnnotationsArePresent(@NotNull Sdk sdk) {
-        if (!KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk)) {
-            return false;
-        }
-
-        boolean isAndroidSdk = NotificationsPackage.isAndroidSdk(sdk);
-        return !(isAndroidSdk && !KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk));
+        return NotificationsPackage.isAndroidSdk(sdk)
+               ? KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk)
+               : KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk);
     }
 }

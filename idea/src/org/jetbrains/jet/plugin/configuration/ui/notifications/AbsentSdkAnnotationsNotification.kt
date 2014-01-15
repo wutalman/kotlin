@@ -48,11 +48,11 @@ private class AbsentAnnotationsListener(val sdks: Collection<Sdk>): Notification
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             if (event.getDescription() == "configure") {
                 for (sdk in sdks) {
-                    if (!KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk)) {
-                        KotlinRuntimeLibraryUtil.addJdkAnnotations(sdk);
-                    }
-                    if (isAndroidSdk(sdk) && !KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk)) {
+                    if (isAndroidSdk(sdk)) {
                         KotlinRuntimeLibraryUtil.addAndroidSdkAnnotations(sdk);
+                    }
+                    else {
+                        KotlinRuntimeLibraryUtil.addJdkAnnotations(sdk);
                     }
                 }
             }
