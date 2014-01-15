@@ -121,7 +121,7 @@ public class LambdaTransformer {
         Parameters parameters = getLambdaParameters(builder, invocation);
 
         MethodVisitor invokeVisitor = newMethod(classBuilder, invoke);
-        InlineFieldRemapper remapper = new InlineFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters);
+        InlineFieldRemapper remapper = new InlineFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getRecapturedLambdas());
         MethodInliner inliner = new MethodInliner(invoke, parameters, info.subInline(info.nameGenerator.subGenerator("lambda")), oldLambdaType,
                                                   remapper);
         inliner.doTransformAndMerge(invokeVisitor, new VarRemapper.ParamRemapper(parameters, null), remapper, false);
@@ -205,6 +205,7 @@ public class LambdaTransformer {
             cur = cur.getNext();
         }
 
+        Map<String, LambdaInfo> recapturedLambdas = new HashMap<String, LambdaInfo>(); //captured var of inlined parameter
         List<CapturedParamInfo> recaptured = new ArrayList<CapturedParamInfo>();
         for (LambdaInfo info : additionalCaptured) {
             List<CapturedParamInfo> vars = info.getCapturedVars();
@@ -213,9 +214,11 @@ public class LambdaTransformer {
                 recapturedParamInfo.setRecapturedFrom(info);
                 recaptured.add(var);
             }
+            recapturedLambdas.put(info.getLambdaClassType().getInternalName(), info);
         }
 
         invocation.setRecaptured(recaptured);
+        invocation.setRecapturedLambdas(recapturedLambdas);
     }
 
     @Nullable
