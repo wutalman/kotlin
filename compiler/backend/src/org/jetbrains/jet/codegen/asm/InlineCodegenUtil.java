@@ -129,14 +129,16 @@ public class InlineCodegenUtil {
 
     private static String getInlineName(@NotNull DeclarationDescriptor referencedDescriptor, @NotNull DeclarationDescriptor currentDescriptor, @NotNull JetTypeMapper typeMapper) {
         if (currentDescriptor instanceof PackageFragmentDescriptor) {
-            //PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(typeMapper.getBindingContext(), referencedDescriptor);
-            //
-            //Type packageFragmentType =
-            //        getNamespacePartType(PackageClassUtils.getPackageClassFqName(getFqName(currentDescriptor).toSafe()),
-            //                             psiElement.getContainingFile().getVirtualFile());
-            //
-            //return packageFragmentType.getInternalName().replace('.', '/');
-            return PackageClassUtils.getPackageClassFqName(getFqName(referencedDescriptor).toSafe()).asString().replace('.', '/');
+            PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(typeMapper.getBindingContext(), referencedDescriptor);
+            if (psiElement == null) {
+                throw new RuntimeException("Couldn't find declaration for " + referencedDescriptor);
+            }
+
+            Type packageFragmentType =
+                    getNamespacePartType(PackageClassUtils.getPackageClassFqName(getFqName(currentDescriptor).toSafe()),
+                                         psiElement.getContainingFile().getVirtualFile());
+
+            return packageFragmentType.getInternalName().replace('.', '/');
         }
         else if (currentDescriptor instanceof ClassifierDescriptor) {
             Type type = typeMapper.mapType((ClassifierDescriptor) currentDescriptor);
