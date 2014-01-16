@@ -19,12 +19,13 @@ package org.jetbrains.jet.cli.jvm.compiler;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.kotlin.ClassFileFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public class CliVirtualFileFinder implements VirtualFileFinder {
+public class CliVirtualFileFinder implements VirtualFileFinder, ClassFileFinder {
 
     @NotNull
     private final ClassPath classPath;
@@ -37,7 +38,27 @@ public class CliVirtualFileFinder implements VirtualFileFinder {
     @Override
     public VirtualFile find(@NotNull FqName className) {
         for (VirtualFile root : classPath) {
-            VirtualFile fileInRoot = findFileInRoot(className.asString(), root);
+            VirtualFile fileInRoot = findKotlinFile(className, root);
+            if (fileInRoot != null) {
+                return fileInRoot;
+            }
+        }
+        return null;
+    }
+
+    private static VirtualFile findKotlinFile(@NotNull FqName className, @NotNull VirtualFile root) {
+        VirtualFile vFile = findFileInRoot(className.asString(), root, '.');
+        if (vFile != null && KotlinClassHeader.read(new VirtualFileKotlinClass(vFile)) != null) {
+            return vFile;
+        }
+        return null;
+    }
+
+    @Override
+    public VirtualFile find(@NotNull String internalName) {
+        for (VirtualFile root : classPath) {
+            //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
+            VirtualFile fileInRoot = findFileInRoot(internalName, root, '/');
             if (fileInRoot != null) {
                 return fileInRoot;
             }
@@ -47,12 +68,12 @@ public class CliVirtualFileFinder implements VirtualFileFinder {
 
     //NOTE: copied with some changes from CoreJavaFileManager
     @Nullable
-    private static VirtualFile findFileInRoot(@NotNull String qName, @NotNull VirtualFile root) {
+    private static VirtualFile findFileInRoot(@NotNull String qName, @NotNull VirtualFile root, char separator) {
         String pathRest = qName;
         VirtualFile cur = root;
 
         while (true) {
-            int dot = pathRest.indexOf('.');
+            int dot = pathRest.indexOf(separator);
             if (dot < 0) break;
 
             String pathComponent = pathRest.substring(0, dot);
@@ -70,11 +91,10 @@ public class CliVirtualFileFinder implements VirtualFileFinder {
                 //TODO: log
                 return null;
             }
-            //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
-            if (KotlinClassHeader.read(new VirtualFileKotlinClass(vFile)) != null) {
-                return vFile;
-            }
+
+            return vFile;
         }
         return null;
     }
+
 }
