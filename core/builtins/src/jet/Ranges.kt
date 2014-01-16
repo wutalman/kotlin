@@ -13,7 +13,7 @@ public class ByteRange(public override val start: Byte, public override val end:
     fun equals(that: Any?): Boolean =
         that is ByteRange && start == that.start && end == that.end
 
-    fun hashCode() = 31 * start.toInt() + end
+    fun hashCode(): Int = 31 * start.toInt() + end
 
     class object {
         public val EMPTY: ByteRange = ByteRange(1, 0)
@@ -31,7 +31,7 @@ public class CharRange(public override val start: Char, public override val end:
     fun equals(that: Any?): Boolean =
         that is CharRange && start == that.start && end == that.end
 
-    fun hashCode() = 31 * start.toInt() + end
+    fun hashCode(): Int = 31 * start.toInt() + end
 
     class object {
         public val EMPTY: CharRange = CharRange(1.toChar(), 0.toChar())
@@ -49,7 +49,7 @@ public class ShortRange(public override val start: Short, public override val en
     fun equals(that: Any?): Boolean =
         that is ShortRange && start == that.start && end == that.end
 
-    fun hashCode() = 31 * start.toInt() + end
+    fun hashCode(): Int = 31 * start.toInt() + end
 
     class object {
         public val EMPTY: ShortRange = ShortRange(1, 0)
@@ -67,7 +67,7 @@ public class IntRange(public override val start: Int, public override val end: I
     fun equals(that: Any?): Boolean =
         that is IntRange && start == that.start && end == that.end
 
-    fun hashCode() = 31 * start + end
+    fun hashCode(): Int = 31 * start + end
 
     class object {
         public val EMPTY: IntRange = IntRange(1, 0)
@@ -85,7 +85,7 @@ public class LongRange(public override val start: Long, public override val end:
     fun equals(that: Any?): Boolean =
         that is LongRange && start == that.start && end == that.end
 
-    fun hashCode() = (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))).toInt()
+    fun hashCode(): Int = (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))).toInt()
 
     class object {
         public val EMPTY: LongRange = LongRange(1, 0)
@@ -103,7 +103,7 @@ public class FloatRange(public override val start: Float, public override val en
     fun equals(that: Any?): Boolean =
         that is FloatRange && java.lang.Float.compare(start, that.start) == 0 && java.lang.Float.compare(end, that.end) == 0
 
-    fun hashCode() = 31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end)
+    fun hashCode(): Int = 31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end)
 
     class object {
         public val EMPTY: FloatRange = FloatRange(1.0f, 0.0f)

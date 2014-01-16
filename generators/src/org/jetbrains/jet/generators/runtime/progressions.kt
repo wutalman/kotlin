@@ -45,11 +45,11 @@ class GenerateProgressions(val out: PrintWriter) {
             val constructor = checkNaN + checkZero
 
             val hashCode = when (kind) {
-                BYTE, CHAR, SHORT -> " = 31 * (31 * start.toInt() + end) + increment"
-                INT -> " = 31 * (31 * start + end) + increment"
-                LONG -> " = (31 * (31 * ${hashLong("start")} + ${hashLong("end")}) + ${hashLong("increment")}).toInt()"
-                FLOAT -> " = 31 * (31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}) + ${floatToIntBits("increment")}"
-                DOUBLE -> ": Int {\n" +
+                BYTE, CHAR, SHORT -> "= 31 * (31 * start.toInt() + end) + increment"
+                INT -> "= 31 * (31 * start + end) + increment"
+                LONG -> "= (31 * (31 * ${hashLong("start")} + ${hashLong("end")}) + ${hashLong("increment")}).toInt()"
+                FLOAT -> "= 31 * (31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}) + ${floatToIntBits("increment")}"
+                DOUBLE -> "{\n" +
                 "        var temp = ${doubleToLongBits("start")}\n" +
                 "        var result = ${hashLong("temp")}\n" +
                 "        temp = ${doubleToLongBits("end")}\n" +
@@ -74,7 +74,7 @@ class GenerateProgressions(val out: PrintWriter) {
     fun equals(that: Any?): Boolean =
         that is $progression && ${compare("start")} && ${compare("end")} && ${compare("increment")}
 
-    fun hashCode()$hashCode
+    fun hashCode(): Int $hashCode
 
     fun toString() = ${"if (increment > 0) \"\$start..\$end step \$increment\" else \"\$start downTo \$end step \${-increment}\""}
 }""")
