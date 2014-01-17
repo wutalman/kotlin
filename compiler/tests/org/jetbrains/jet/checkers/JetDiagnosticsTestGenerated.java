@@ -1613,6 +1613,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt897.kt");
             }
             
+            @TestMetadata("localClasses.kt")
+            public void testLocalClasses() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/localClasses.kt");
+            }
+            
             @TestMetadata("propertiesOrderInPackage.kt")
             public void testPropertiesOrderInPackage() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesOrderInPackage.kt");
