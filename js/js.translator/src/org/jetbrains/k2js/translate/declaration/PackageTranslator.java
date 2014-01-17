@@ -38,11 +38,11 @@ final class PackageTranslator extends AbstractTranslator {
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull TranslationContext context
     ) {
-        SmartList<JsPropertyInitializer> initializers = new SmartList<JsPropertyInitializer>();
-        DefinitionPlace definitionPlace = new DefinitionPlace(initializers, context.getQualifiedReference(descriptor));
+        SmartList<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
+        DefinitionPlace definitionPlace = new DefinitionPlace(properties, context.getQualifiedReference(descriptor));
 
         TranslationContext newContext = context.newDeclaration(descriptor, definitionPlace);
-        FileDeclarationVisitor visitor = new FileDeclarationVisitor(newContext, initializers);
+        FileDeclarationVisitor visitor = new FileDeclarationVisitor(newContext, definitionPlace.getProperties());
         return new PackageTranslator(descriptor, newContext, visitor);
     }
 
