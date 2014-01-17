@@ -1,3 +1,4 @@
+val s = doWork({11})
 
 fun box(): String {
     val result = doWork({11})
