@@ -521,6 +521,7 @@ private fun createUnconvertibleCompileTimeConstant(value: Any?): CompileTimeCons
         is Float -> FloatValue(value)
         is Double -> DoubleValue(value)
         is Boolean -> BooleanValue.valueOf(value)
+        is String -> StringValue(value)
         else -> null
     }
 }
