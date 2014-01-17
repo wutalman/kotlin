@@ -20,16 +20,17 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.LabelGenerator;
-import org.jetbrains.k2js.translate.context.*;
+import org.jetbrains.k2js.translate.context.AliasingContext;
+import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.context.UsageTracker;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -118,7 +119,25 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
             }
         }
         else {
-            JsNameRef funReference = context().define(FUNCTION_NAME_GENERATOR.generate(), jsFunction);
+            String suggestName = "";
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (!(containingDeclaration instanceof ClassOrPackageFragmentDescriptor) &&
+                !(containingDeclaration instanceof AnonymousFunctionDescriptor)) {
+                suggestName = functionContext.getNameForDescriptor(containingDeclaration).getIdent();
+            }
+
+            if (!suggestName.isEmpty() && !suggestName.endsWith("$")) {
+                suggestName += "$";
+            }
+
+            if (descriptor instanceof AnonymousFunctionDescriptor) {
+                suggestName += "f";
+            }
+            else {
+                suggestName += functionContext.getNameForDescriptor(descriptor).getIdent();
+            }
+
+            JsNameRef funReference = context().define(suggestName, jsFunction);
 
             InnerFunctionTranslator innerTranslator = new InnerFunctionTranslator(descriptor, functionContext, jsFunction, tempRef);
             result = innerTranslator.translate(funReference, context());

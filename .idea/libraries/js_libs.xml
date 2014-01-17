@@ -1,5 +1,8 @@
 <component name="libraryTable">
   <library name="js-libs">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/dart-ast.jar!/" />
     </CLASSES>

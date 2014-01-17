@@ -1,0 +1,5 @@
+<root>
+  <item name='com.google.dart.compiler.backend.js.ast.JsName com.google.dart.compiler.backend.js.ast.JsNameRef makeRef()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>
