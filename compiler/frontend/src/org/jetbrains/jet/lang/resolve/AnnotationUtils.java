@@ -94,7 +94,9 @@ public class AnnotationUtils {
             for (AnnotationDescriptor annotation : annotations) {
                 //noinspection ConstantConditions
                 if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
-                    return "kotlin.arrays.array".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
+                    if (annotation.getAllValueArguments().values().size() == 1) {
+                        return "kotlin.arrays.array".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
+                    }
                 }
             }
         }
@@ -107,14 +109,16 @@ public class AnnotationUtils {
             for (AnnotationDescriptor annotation : annotations) {
                 //noinspection ConstantConditions
                 if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
-                    return "kotlin.javaClass.function".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
+                    if (annotation.getAllValueArguments().values().size() == 1) {
+                        return "kotlin.javaClass.function".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
+                    }
                 }
             }
         }
         return false;
     }
 
-    public static boolean isPropertyCompileTimeConstant(@NotNull PropertyDescriptor descriptor) {
+    public static boolean isPropertyCompileTimeConstant(@NotNull VariableDescriptor descriptor) {
         if (descriptor.isVar()) {
             return false;
         }
