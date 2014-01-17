@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,7 +95,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         List<JetFile> sortedFiles = new ArrayList<JetFile>(files);
         Collections.sort(sortedFiles, jetFileComparator);
 
-        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + " analyze", LOG).start();
+        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + " analyze for package: " + files).start();
         try {
             if (USE_LAZY) {
                 CancelableResolveSession session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(sortedFiles.get(0));
@@ -116,7 +116,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + " analyze", LOG).start();
+        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + " analyze for class " + classOrObject.getName()).start();
 
         try {
             if (USE_LAZY) {
