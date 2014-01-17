@@ -26,20 +26,41 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 
 fun PsiElement.toLightMethods(): List<PsiMethod> =
         when (this) {
-            is JetNamedFunction -> Collections.singletonList(LightClassUtil.getLightClassMethod(this))
-            is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
-            is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
-            is JetPropertyAccessor -> Collections.singletonList(LightClassUtil.getLightClassAccessorMethod(this))
-            is PsiMethod -> Collections.singletonList(this)
-            else -> Collections.emptyList()
+            is JetNamedFunction ->
+                Collections.singletonList(LightClassUtil.getLightClassMethod(this))
+
+            is JetProperty ->
+                LightClassUtil.getLightClassPropertyMethods(this).toList()
+
+            is JetParameter ->
+                LightClassUtil.getLightClassPropertyMethods(this).toList()
+
+            is JetPropertyAccessor ->
+                Collections.singletonList(LightClassUtil.getLightClassAccessorMethod(this))
+
+            is PsiMethod ->
+                Collections.singletonList(this)
+
+            else ->
+                Collections.emptyList()
         }
 
 fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
         when (this) {
-            is JetNamedFunction -> LightClassUtil.getLightClassMethod(this)
-            is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).getGetter()
-            is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).getGetter()
-            is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this)
-            is PsiMethod -> this
+            is JetNamedFunction ->
+                LightClassUtil.getLightClassMethod(this)
+
+            is JetProperty ->
+                LightClassUtil.getLightClassPropertyMethods(this).getGetter()
+
+            is JetParameter ->
+                LightClassUtil.getLightClassPropertyMethods(this).getGetter()
+
+            is JetPropertyAccessor ->
+                LightClassUtil.getLightClassAccessorMethod(this)
+
+            is PsiMethod ->
+                this
+
             else -> null
         }
