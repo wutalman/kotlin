@@ -428,7 +428,6 @@ public class BodyResolver {
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             if (!(entry.getKey() instanceof JetClass)) continue;
             JetClass jetClass = (JetClass) entry.getKey();
-            if (!context.completeAnalysisNeeded(jetClass)) continue;
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             for (JetProperty property : jetClass.getProperties()) {
@@ -462,7 +461,6 @@ public class BodyResolver {
         // Top-level properties & properties of objects
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : this.context.getProperties().entrySet()) {
             JetProperty property = entry.getKey();
-            if (!context.completeAnalysisNeeded(property)) continue;
             if (processed.contains(property)) continue;
 
             PropertyDescriptor propertyDescriptor = entry.getValue();
@@ -494,6 +492,8 @@ public class BodyResolver {
     }
 
     public void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor) {
+        if (!context.completeAnalysisNeeded(property)) return;
+
         ObservableBindingTrace fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
         JetPropertyAccessor getter = property.getGetter();
