@@ -54,12 +54,13 @@ public class JetReferenceUtil {
         if (declarationInDecompiledFile != null) {
             results.add(new PsiElementResolveResult(declarationInDecompiledFile));
         }
+        else {
+            Collection<PsiElement> builtInSymbols =
+                    project.getComponent(BuiltInsReferenceResolver.class).resolveBuiltInSymbol(original);
 
-        Collection<PsiElement> builtInSymbols =
-                project.getComponent(BuiltInsReferenceResolver.class).resolveBuiltInSymbol(original);
-
-        for (PsiElement symbol : builtInSymbols) {
-            results.add(new PsiElementResolveResult(symbol));
+            for (PsiElement symbol : builtInSymbols) {
+                results.add(new PsiElementResolveResult(symbol));
+            }
         }
     }
 }
