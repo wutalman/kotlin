@@ -34,7 +34,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleManager
 
-public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
+public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
 
     override fun extractTransferableData(content: Transferable?): TextBlockTransferableData? {
         try {
