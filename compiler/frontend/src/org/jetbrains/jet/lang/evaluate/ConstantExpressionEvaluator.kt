@@ -361,15 +361,12 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         return null
     }
 
-    private fun resolveArguments(valueArguments: List<ValueArgument>, expectedType: JetType): List<CompileTimeConstant<*>> {
-        val constants = arrayListOf<CompileTimeConstant<*>>()
+    private fun resolveArguments(valueArguments: List<ValueArgument>, expectedType: JetType): List<CompileTimeConstant<*>?> {
+        val constants = arrayListOf<CompileTimeConstant<*>?>()
         for (argument in valueArguments) {
             val argumentExpression = argument.getArgumentExpression()
             if (argumentExpression != null) {
-                val constant = evaluate(argumentExpression, expectedType)
-                if (constant != null) {
-                    constants.add(constant)
-                }
+                constants.add(evaluate(argumentExpression, expectedType))
             }
         }
         return constants

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.constants;
 
+import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -27,6 +28,7 @@ public class ArrayValue extends CompileTimeConstant<List<CompileTimeConstant<?>>
 
     private final JetType type;
 
+    @KotlinSignature("fun ArrayValue(value: List<CompileTimeConstant<out Any?>?>, `type`: JetType)")
     public ArrayValue(@NotNull List<CompileTimeConstant<?>> value, @NotNull JetType type) {
         super(value);
         this.type = type;

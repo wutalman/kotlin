@@ -560,6 +560,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant.kt");
             }
             
+            @TestMetadata("annotationParameterMustBeConstantVararg.kt")
+            public void testAnnotationParameterMustBeConstantVararg() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstantVararg.kt");
+            }
+            
             @TestMetadata("annotationParameterMustBeEnumConst.kt")
             public void testAnnotationParameterMustBeEnumConst() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeEnumConst.kt");
