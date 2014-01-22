@@ -30,8 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
@@ -69,7 +68,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     private final DeclarationProviderFactory declarationProviderFactory;
 
     private final Predicate<FqNameUnsafe> specialClasses;
-
 
     private final InjectorForLazyResolve injector;
 
@@ -119,6 +117,8 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 return packageDescriptor.getDeclarationProvider().getAllDeclaredPackages();
             }
         };
+
+        // TODO: parameter modification
         rootDescriptor.addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
     }
 
@@ -144,11 +144,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         return new LazyPackageDescriptor(module, fqName, this, provider);
     }
 
-    @NotNull
-    public InjectorForLazyResolve getInjector() {
-        return injector;
-    }
-
     public boolean isClassSpecial(@NotNull FqNameUnsafe fqName) {
         return specialClasses.apply(fqName);
     }
@@ -169,7 +164,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         if (classOrObject.getParent() instanceof JetClassObject) {
             return getClassObjectDescriptor((JetClassObject) classOrObject.getParent());
         }
-        JetScope resolutionScope = getInjector().getScopeProvider().getResolutionScopeForDeclaration(classOrObject);
+        JetScope resolutionScope = getScopeProvider().getResolutionScopeForDeclaration(classOrObject);
         Name name = safeNameForLazyResolve(classOrObject.getNameAsName());
 
         // Why not use the result here. Because it may be that there is a redeclaration:
@@ -302,7 +297,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
             @Override
             public DeclarationDescriptor visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
-                JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(function);
+                JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(function);
                 scopeForDeclaration.getFunctions(safeNameForLazyResolve(function));
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
@@ -330,7 +325,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
             @Override
             public DeclarationDescriptor visitProperty(@NotNull JetProperty property, Void data) {
-                JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(property);
+                JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(property);
                 scopeForDeclaration.getProperties(safeNameForLazyResolve(property));
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
@@ -384,5 +379,29 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         for (LazyPackageDescriptor lazyPackage : getAllPackages()) {
             ForceResolveUtil.forceResolveAllContents(lazyPackage);
         }
+    }
+
+    public ScopeProvider getScopeProvider() {
+        return injector.getScopeProvider();
+    }
+
+    public JetImportsFactory getJetImportsFactory() {
+        return injector.getJetImportsFactory();
+    }
+
+    public AnnotationResolver getAnnotationResolver() {
+        return injector.getAnnotationResolver();
+    }
+
+    public DescriptorResolver getDescriptorResolver() {
+        return injector.getDescriptorResolver();
+    }
+
+    public TypeResolver getTypeResolver() {
+        return injector.getTypeResolver();
+    }
+
+    public QualifiedExpressionResolver getQualifiedExpressionResolver() {
+        return injector.getQualifiedExpressionResolver();
     }
 }
