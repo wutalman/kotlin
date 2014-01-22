@@ -1,3 +1,5 @@
+package kotlin
+
 annotation class Ann(val i: Int)
 annotation class AnnIA(val ia: IntArray)
 annotation class AnnSA(val sa: Array<String>)
@@ -7,7 +9,9 @@ Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>O.i<!>)
 Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>i<!>)
 Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>i2<!>)
 AnnIA(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>ia<!>)
+AnnIA(intArray(1, 2))
 AnnSA(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>sa<!>)
+AnnSA(array("a", "b"))
 class Test {
     val i = 1
     Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>i<!>) val i2 = 1
