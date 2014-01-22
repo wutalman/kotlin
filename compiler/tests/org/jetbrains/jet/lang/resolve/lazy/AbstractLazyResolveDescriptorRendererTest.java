@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -61,9 +62,10 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         final ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
         lazyModule.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager(new LockBasedStorageManager());
-        final ResolveSession resolveSession = new ResolveSession(getProject(), storageManager, lazyModule,
-                                                                 new FileBasedDeclarationProviderFactory(storageManager, files),
-                                                                 new BindingTraceContext());
+        final ResolveSession resolveSession = new InjectorForLazyResolve(
+                getProject(), storageManager, lazyModule,
+                new FileBasedDeclarationProviderFactory(storageManager, files),
+                new BindingTraceContext()).getResolveSession();
 
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
         psiFile.accept(new JetVisitorVoid() {

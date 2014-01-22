@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.jetbrains.jet.di.InstantiateType;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
@@ -40,10 +39,11 @@ import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.StorageManager;
 
@@ -52,7 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 
 // NOTE: After making changes, you need to re-generate the injectors.
-//       To do that, you can run either this class
+//       To do that, you can run main in this class.
 public class GenerateInjectors {
 
     private GenerateInjectors() {
@@ -86,18 +86,18 @@ public class GenerateInjectors {
 
     private static DependencyInjectorGenerator generateInjectorForLazyResolve() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
+
         generator.addParameter(Project.class);
-        generator.addParameter(ResolveSession.class);
-        generator.addParameter(ModuleDescriptor.class);
-        generator.addPublicField(DescriptorResolver.class);
-        generator.addPublicField(ExpressionTypingServices.class);
-        generator.addPublicField(TypeResolver.class);
-        generator.addPublicField(ScopeProvider.class);
-        generator.addPublicField(AnnotationResolver.class);
-        generator.addPublicField(QualifiedExpressionResolver.class);
-        generator.addPublicField(JetImportsFactory.class);
+        generator.addParameter(LazyResolveStorageManager.class);
+        generator.addParameter(ModuleDescriptorImpl.class);
+        generator.addParameter(DeclarationProviderFactory.class);
+        generator.addParameter(BindingTrace.class);
+
+        generator.addPublicField(ResolveSession.class);
+
         generator.addField(CallResolverExtensionProvider.class);
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"));
+
         generator.configure("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyResolve", GenerateInjectors.class);
         return generator;
     }
