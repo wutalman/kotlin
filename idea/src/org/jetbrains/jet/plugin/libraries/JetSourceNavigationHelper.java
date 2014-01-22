@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -55,7 +56,6 @@ import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -64,6 +64,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
+import org.jetbrains.jet.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.Collection;
@@ -233,7 +234,8 @@ public class JetSourceNavigationHelper {
                 project,
                 storageManager,
                 moduleDescriptor,
-                providerFactory);
+                providerFactory,
+                new BindingTraceContext());
 
         for (JetNamedDeclaration candidate : candidates) {
             //noinspection unchecked

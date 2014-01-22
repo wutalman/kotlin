@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,19 +32,18 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.jet.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 
 import java.util.Collection;
@@ -83,42 +82,12 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             @NotNull Project project,
             @NotNull LazyResolveStorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
-            @NotNull DeclarationProviderFactory declarationProviderFactory
-    ) {
-        this(project, storageManager, rootDescriptor, declarationProviderFactory, NO_ALIASES,
-             Predicates.<FqNameUnsafe>alwaysFalse(),
-             new BindingTraceContext());
-    }
-
-    public ResolveSession(
-            @NotNull Project project,
-            @NotNull LazyResolveStorageManager storageManager,
-            @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
-            @NotNull BindingTrace delegationTrace
-    ) {
-        this(project,
-             storageManager,
-             rootDescriptor,
-             declarationProviderFactory,
-             NO_ALIASES,
-             Predicates.<FqNameUnsafe>alwaysFalse(),
-             delegationTrace);
-    }
-
-    @Deprecated // Internal use only
-    public ResolveSession(
-            @NotNull Project project,
-            @NotNull LazyResolveStorageManager storageManager,
-            @NotNull ModuleDescriptorImpl rootDescriptor,
-            @NotNull DeclarationProviderFactory declarationProviderFactory,
-            @NotNull Function<FqName, Name> classifierAliases,
-            @NotNull Predicate<FqNameUnsafe> specialClasses,
             @NotNull BindingTrace delegationTrace
     ) {
         this.storageManager = storageManager;
-        this.classifierAliases = classifierAliases;
-        this.specialClasses = specialClasses;
+        this.classifierAliases = NO_ALIASES;
+        this.specialClasses = Predicates.<FqNameUnsafe>alwaysFalse();
         this.trace = storageManager.createSafeTrace(delegationTrace);
         this.injector = new InjectorForLazyResolve(project, this, rootDescriptor);
         this.module = rootDescriptor;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,10 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.k2js.config.Config;
 
@@ -158,7 +158,7 @@ public final class AnalyzerFacadeForJS {
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
         ModuleDescriptorImpl module = createJsModule("<lazy module>");
         module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
-        return new ResolveSession(config.getProject(), storageManager, module, declarationProviderFactory);
+        return new ResolveSession(config.getProject(), storageManager, module, declarationProviderFactory, new BindingTraceContext());
     }
 
     @NotNull
