@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -26,12 +25,13 @@ import java.io.File;
 
 public abstract class AbstractInsertImportOnPasteTest extends LightCodeInsightFixtureTestCase {
     private static final String BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/imports";
+    private static final String DEFAULT_TO_FILE_TEXT = "package to\n\n<caret>";
 
     public void doTestCut(@SuppressWarnings("UnusedParameters") String path) {
         doTestAction(IdeActions.ACTION_CUT);
     }
 
-    public void doTestCopy(@SuppressWarnings("UnusedaParameters") String path) {
+    public void doTestCopy(@SuppressWarnings("UnusedParameters") String path) {
         doTestAction(IdeActions.ACTION_COPY);
     }
 
@@ -44,7 +44,13 @@ public abstract class AbstractInsertImportOnPasteTest extends LightCodeInsightFi
         }
         myFixture.configureByFile(testName + ".kt");
         myFixture.performEditorAction(cutOrCopy);
-        myFixture.configureByFile(testName + ".to.kt");
+        String toFileName = testName + ".to.kt";
+        if (new File(BASE_PATH + "/" + toFileName).exists()) {
+            myFixture.configureByFile(toFileName);
+        }
+        else {
+            myFixture.configureByText(toFileName, DEFAULT_TO_FILE_TEXT);
+        }
         myFixture.performEditorAction(IdeActions.ACTION_PASTE);
         myFixture.checkResultByFile(testName + ".expected.kt");
     }
