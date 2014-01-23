@@ -17,13 +17,15 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 
-public abstract class AbstractInsertImportOnPasteTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsightFixtureTestCase {
     private static final String BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/imports";
     private static final String DEFAULT_TO_FILE_TEXT = "package to\n\n<caret>";
 
@@ -33,6 +35,12 @@ public abstract class AbstractInsertImportOnPasteTest extends LightCodeInsightFi
 
     public void doTestCopy(@SuppressWarnings("UnusedParameters") String path) {
         doTestAction(IdeActions.ACTION_COPY);
+    }
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     private void doTestAction(@NotNull String cutOrCopy) {
