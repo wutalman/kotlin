@@ -53,6 +53,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/Constructor.kt");
         }
         
+        @TestMetadata("ExtensionAsInfixOrOperator.kt")
+        public void testExtensionAsInfixOrOperator() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ExtensionAsInfixOrOperator.kt");
+        }
+        
         @TestMetadata("ExtensionFunction.kt")
         public void testExtensionFunction() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ExtensionFunction.kt");
@@ -78,6 +83,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/ImportDependency.kt");
         }
         
+        @TestMetadata("NoImportForBuiltIns.kt")
+        public void testNoImportForBuiltIns() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/NoImportForBuiltIns.kt");
+        }
+        
         @TestMetadata("NoImportForSamePackage.kt")
         public void testNoImportForSamePackage() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/NoImportForSamePackage.kt");
@@ -86,6 +96,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("ReferencedElementAlsoCopied.kt")
         public void testReferencedElementAlsoCopied() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ReferencedElementAlsoCopied.kt");
+        }
+        
+        @TestMetadata("TopLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/TopLevelProperty.kt");
         }
         
         @TestMetadata("Trait.kt")
@@ -121,6 +136,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCut("idea/testData/copyPaste/imports/Constructor.kt");
         }
         
+        @TestMetadata("ExtensionAsInfixOrOperator.kt")
+        public void testExtensionAsInfixOrOperator() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ExtensionAsInfixOrOperator.kt");
+        }
+        
         @TestMetadata("ExtensionFunction.kt")
         public void testExtensionFunction() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/ExtensionFunction.kt");
@@ -146,6 +166,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCut("idea/testData/copyPaste/imports/ImportDependency.kt");
         }
         
+        @TestMetadata("NoImportForBuiltIns.kt")
+        public void testNoImportForBuiltIns() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/NoImportForBuiltIns.kt");
+        }
+        
         @TestMetadata("NoImportForSamePackage.kt")
         public void testNoImportForSamePackage() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/NoImportForSamePackage.kt");
@@ -154,6 +179,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("ReferencedElementAlsoCopied.kt")
         public void testReferencedElementAlsoCopied() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/ReferencedElementAlsoCopied.kt");
+        }
+        
+        @TestMetadata("TopLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/TopLevelProperty.kt");
         }
         
         @TestMetadata("Trait.kt")
