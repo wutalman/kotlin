@@ -75,12 +75,9 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         val collectedData = ArrayList<ReferenceData>()
         for ((startOffset, endOffset) in zip(startOffsets, endOffsets)) {
             for (element in CollectHighlightsUtil.getElementsInRange(file, startOffset, endOffset)) {
-                val referencedElement = getReferencedElement(element)
-                if (referencedElement != null) {
-                    val fqName = JetPsiUtil.getFQName(referencedElement)
-                    if (fqName != null) {
-                        collectedData.add(createReferenceData(element, startOffset, fqName))
-                    }
+                val fqName = getReferencedElement(element)?.fqName
+                if (fqName != null) {
+                    collectedData.add(createReferenceData(element, startOffset, fqName))
                 }
             }
         }
@@ -154,20 +151,28 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     fun restoreReferences(referenceData: Array<out ReferenceData>, refs: Array<out JetReferenceExpression?>) {
         for (i in referenceData.indices) {
             val referenceExpression = refs[i]
-            if (referenceExpression != null) {
-                val reference = referenceExpression.getReference()
-                val referencedExpressions = (reference as? JetPsiReference)?.multiResolve(/*this is ignored*/ true)?.map { it.getElement() }
-                if (referencedExpressions == null || referencedExpressions.isEmpty()) {
-                    //TODO
-                    val data = referenceData[i]
-                    ImportInsertHelper.addImportDirectiveIfNeeded(data.fqName, referenceExpression.getContainingFile() as JetFile)
-                    continue
-                }
-                for (referencedExpression in referencedExpressions) {
-                    println("${referencedExpression?.getText()} in ${referencedExpression?.getContainingFile()?.getName()}")
-                }
+            if (referenceExpression == null) {
+                continue
             }
+            val reference = referenceExpression.getReference() as? JetPsiReference
+            if (reference == null) {
+                //TODO: decide whether it is any difference to when reference expression is null
+                continue
+            }
+            //TODO: hide inside fun
+            val referencedExpressions = reference.multiResolve(/*this is ignored*/ true).map { it.getElement() }.filterNotNull()
+            //TODO
+            val data = referenceData[i]
+            restoreReference(referenceExpression, referencedExpressions, data.fqName)
         }
+    }
+
+    private fun restoreReference(referenceExpression: JetReferenceExpression, referencedExpressions: List<PsiElement>, fqName: FqName) {
+        for (referencedExpression in referencedExpressions) {
+            println("${referencedExpression.getText()} in ${referencedExpression.getContainingFile()?.getName()}")
+            return
+        }
+        ImportInsertHelper.addImportDirectiveIfNeeded(fqName, referenceExpression.getContainingFile() as JetFile)
     }
 
     private fun createReferenceData(
@@ -183,7 +188,19 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
 val ReferenceData.fqName: FqName
     get() = FqName(qClassName!!)
 
+//TODO: can we do it in stdlib?
 fun zip(first: IntArray, second: IntArray): Iterator<Pair<Int, Int>> {
     assert(first.size == second.size)
     return first.iterator().zip(second.iterator())
 }
+
+private val PsiElement.fqName: FqName?
+    get() {
+        val namedDeclaration = this as? JetNamedDeclaration
+        return if (namedDeclaration != null) {
+            JetPsiUtil.getFQName(namedDeclaration)
+        }
+        else {
+            null
+        }
+    }
