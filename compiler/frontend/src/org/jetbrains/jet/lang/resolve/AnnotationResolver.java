@@ -224,7 +224,7 @@ public class AnnotationResolver {
                 if (arrayType == null) {
                     arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
                 }
-                ArrayValue arrayConstant = new ArrayValue(constants, arrayType);
+                ArrayValue arrayConstant = new ArrayValue(constants, arrayType, true);
                 annotationDescriptor.setValueArgument(parameterDescriptor, arrayConstant);
                 if (!constants.isEmpty()) {
                     checkCompileTimeConstant(arrayConstant, descriptorToArgument.getValue().getArguments().get(0), varargElementType, trace);
