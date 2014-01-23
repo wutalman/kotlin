@@ -637,6 +637,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("array.kt")
+                public void testArray() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/array.kt");
+                }
+                
                 @TestMetadata("booleanLocalVal.kt")
                 public void testBooleanLocalVal() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/booleanLocalVal.kt");

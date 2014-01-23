@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
@@ -43,7 +42,10 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -226,9 +228,6 @@ public class AnnotationResolver {
                 }
                 ArrayValue arrayConstant = new ArrayValue(constants, arrayType, true);
                 annotationDescriptor.setValueArgument(parameterDescriptor, arrayConstant);
-                if (!constants.isEmpty()) {
-                    checkCompileTimeConstant(arrayConstant, descriptorToArgument.getValue().getArguments().get(0), varargElementType, trace);
-                }
             }
             else {
                 for (CompileTimeConstant<?> constant : constants) {
@@ -241,27 +240,34 @@ public class AnnotationResolver {
     }
 
     private static void checkCompileTimeConstant(
-            @Nullable CompileTimeConstant<?> constant,
-            @NotNull ValueArgument argument,
+            @NotNull JetExpression argumentExpression,
             @NotNull JetType expectedType,
             @NotNull BindingTrace trace
     ) {
-        if (constant instanceof ArrayValue) {
-            for (CompileTimeConstant<?> arrayValue : ((ArrayValue) constant).getValue()) {
-                checkCompileTimeConstant(arrayValue, argument, constant.getType(KotlinBuiltIns.getInstance()), trace);
-            }
-        }
-
-        if (constant != null && constant.canBeUsedInAnnotations()) {
-            return;
-        }
-
-        JetExpression argumentExpression = argument.getArgumentExpression();
-        assert argumentExpression != null : "";
         JetType expressionType = trace.get(BindingContext.EXPRESSION_TYPE, argumentExpression);
 
         // TYPE_MISMATCH should be reported in this case
         if (expressionType != null && expressionType.equals(expectedType)) {
+            // array(1, 2, 3) - error should be reported on inner expression
+            if (argumentExpression instanceof JetCallExpression) {
+                ResolvedCall<?> resolvedCall = trace.get(BindingContext.RESOLVED_CALL, ((JetCallExpression) argumentExpression).getCalleeExpression());
+                if (resolvedCall != null && AnnotationUtils.isArrayMethodCall(resolvedCall)) {
+                    for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptor : resolvedCall.getValueArguments().entrySet()) {
+                        for (ValueArgument valueArgument : descriptor.getValue().getArguments()) {
+                            JetExpression valueArgumentArgumentExpression = valueArgument.getArgumentExpression();
+                            if (valueArgumentArgumentExpression != null) {
+                                checkCompileTimeConstant(valueArgumentArgumentExpression, descriptor.getKey().getVarargElementType(), trace);
+                            }
+                        }
+                    }
+                }
+            }
+
+            CompileTimeConstant<?> constant = trace.get(BindingContext.COMPILE_TIME_VALUE, argumentExpression);
+            if (constant != null && constant.canBeUsedInAnnotations()) {
+                return;
+            }
+
             ClassifierDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
             if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
                 trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression));
@@ -296,7 +302,7 @@ public class AnnotationResolver {
                     ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, trace);
                 }
                 constants.add(constant);
-                checkCompileTimeConstant(constant, argument, expectedType, trace);
+                checkCompileTimeConstant(argumentExpression, expectedType, trace);
             }
         }
         return constants;
