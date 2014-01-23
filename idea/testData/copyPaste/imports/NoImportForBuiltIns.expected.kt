@@ -1,3 +1,6 @@
-package b
+package to
 
-<caret>
+import a.a
+import a.b
+
+fun f(c: IntRange) = a + b

@@ -1,3 +1,3 @@
 package a
 
-fun f(a: A, t: T) = g(A().ext())
+fun f(a: A, t: T) = g(A(c).ext())

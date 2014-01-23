@@ -43,6 +43,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/ClassAlreadyImported.kt");
         }
         
+        @TestMetadata("ClassMember.kt")
+        public void testClassMember() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ClassMember.kt");
+        }
+        
         @TestMetadata("ClassType.kt")
         public void testClassType() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ClassType.kt");
@@ -78,9 +83,19 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/FunctionAlreadyImported.kt");
         }
         
+        @TestMetadata("FunctionParameter.kt")
+        public void testFunctionParameter() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/FunctionParameter.kt");
+        }
+        
         @TestMetadata("ImportDependency.kt")
         public void testImportDependency() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ImportDependency.kt");
+        }
+        
+        @TestMetadata("Local.kt")
+        public void testLocal() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/Local.kt");
         }
         
         @TestMetadata("NoImportForBuiltIns.kt")
@@ -126,6 +141,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCut("idea/testData/copyPaste/imports/ClassAlreadyImported.kt");
         }
         
+        @TestMetadata("ClassMember.kt")
+        public void testClassMember() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ClassMember.kt");
+        }
+        
         @TestMetadata("ClassType.kt")
         public void testClassType() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/ClassType.kt");
@@ -161,9 +181,19 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCut("idea/testData/copyPaste/imports/FunctionAlreadyImported.kt");
         }
         
+        @TestMetadata("FunctionParameter.kt")
+        public void testFunctionParameter() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/FunctionParameter.kt");
+        }
+        
         @TestMetadata("ImportDependency.kt")
         public void testImportDependency() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/ImportDependency.kt");
+        }
+        
+        @TestMetadata("Local.kt")
+        public void testLocal() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/Local.kt");
         }
         
         @TestMetadata("NoImportForBuiltIns.kt")

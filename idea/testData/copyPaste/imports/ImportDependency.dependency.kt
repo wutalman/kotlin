@@ -2,7 +2,9 @@ package d
 
 trait T
 
-class A {}
+class A(i: Int) {}
+
+val c = 0
 
 fun g(a: A) {}
 

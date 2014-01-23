@@ -1,6 +1,6 @@
 package a
 
-val a = 1
-val b = 2
+private val a = 1
+private val b = 2
 
-<selection>fun f() = a + b</selection>
+<selection>fun f(c: IntRange) = a + b</selection>

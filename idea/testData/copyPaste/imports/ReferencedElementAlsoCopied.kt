@@ -1,11 +1,12 @@
-package a
-
-<selection>
+package a <selection>
 trait T
 
-class A: T
+class A(i: Int) {}
 
-fun T.ext() {}
+val c = 0
 
-fun f(a: A) { a.ext() }
-</selection>
+fun g(a: A) {}
+
+fun A.ext()
+
+fun f(a: A, t: T) = g(A(c).ext())</selection>
