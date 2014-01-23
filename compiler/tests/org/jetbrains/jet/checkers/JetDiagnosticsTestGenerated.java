@@ -1463,6 +1463,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkInnerLocalDeclarations.kt");
             }
             
+            @TestMetadata("checkPropertyAccessor.kt")
+            public void testCheckPropertyAccessor() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkPropertyAccessor.kt");
+            }
+            
             @TestMetadata("DeadCode.kt")
             public void testDeadCode() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/DeadCode.kt");
