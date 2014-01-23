@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2014 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
 import org.jetbrains.jet.lang.descriptors.*
@@ -17,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.java.lazy.findJavaClass
 import org.jetbrains.jet.lang.resolve.java.lazy.findClassInJava
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.storage.NotNullLazyValue
 
 public abstract class LazyJavaPackageFragmentScope(
         c: LazyJavaResolverContext,
@@ -35,11 +50,7 @@ public abstract class LazyJavaPackageFragmentScope(
             null
         else {
             // TODO: this caching is a temporary workaround, should be replaced with properly caching the whole LazyJavaSubModule
-            val cached = c.javaResolverCache.getClass(jClass)
-            if (cached != null)
-                cached
-            else
-                LazyJavaClassDescriptor(c.withTypes(TypeParameterResolver.EMPTY), packageFragment, fqName, jClass)
+            c.javaResolverCache.getClass(jClass) ?: LazyJavaClassDescriptor(c.withTypes(TypeParameterResolver.EMPTY), packageFragment, fqName, jClass)
         }
     }
 

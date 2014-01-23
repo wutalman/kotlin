@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.DocumentImpl;
@@ -34,8 +36,6 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProv
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.storage.LockBasedLazyResolveStorageManager;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,14 +57,27 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         String fileText = FileUtil.loadFile(new File(testFile), true);
 
         JetFile psiFile = JetPsiFactory.createFile(getProject(), fileText);
-        Collection<JetFile> files = Lists.newArrayList(psiFile);
+        final Collection<JetFile> files = Lists.newArrayList(psiFile);
 
         final ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
         lazyModule.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
-        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager(new LockBasedStorageManager());
+
         final ResolveSession resolveSession = new InjectorForLazyResolve(
-                getProject(), storageManager, lazyModule,
-                new FileBasedDeclarationProviderFactory(storageManager, files),
+                getProject(),
+                new FileBasedDeclarationProviderFactory.FileBaseDeclarationConfiguration() {
+                    @NotNull
+                    @Override
+                    public Collection<JetFile> getFiles() {
+                        return files;
+                    }
+
+                    @NotNull
+                    @Override
+                    public Predicate<FqName> isPackageDeclaredExternallyPredicate() {
+                        return Predicates.alwaysFalse();
+                    }
+                },
+                lazyModule,
                 new BindingTraceContext()).getResolveSession();
 
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();

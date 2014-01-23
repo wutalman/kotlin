@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.util.Function;
@@ -54,21 +53,21 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     private final MemoizedFunctionToNullable<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders;
 
-    public FileBasedDeclarationProviderFactory(@NotNull StorageManager storageManager, @NotNull Collection<JetFile> files) {
-        this(storageManager, files, Predicates.<FqName>alwaysFalse());
+    public interface FileBaseDeclarationConfiguration {
+        @NotNull Collection<JetFile> getFiles();
+        @NotNull Predicate<FqName> isPackageDeclaredExternallyPredicate();
     }
 
     public FileBasedDeclarationProviderFactory(
             @NotNull StorageManager storageManager,
-            @NotNull final Collection<JetFile> files,
-            @NotNull Predicate<FqName> isPackageDeclaredExternally
+            @NotNull final FileBaseDeclarationConfiguration configuration
     ) {
         this.storageManager = storageManager;
-        this.isPackageDeclaredExternally = isPackageDeclaredExternally;
+        this.isPackageDeclaredExternally = configuration.isPackageDeclaredExternallyPredicate();
         this.index = storageManager.createLazyValue(new Function0<Index>() {
             @Override
             public Index invoke() {
-                return computeFilesByPackage(files);
+                return computeFilesByPackage(configuration.getFiles());
             }
         });
         this.packageDeclarationProviders = storageManager.createMemoizedFunctionWithNullableValues(new Function1<FqName, PackageMemberDeclarationProvider>() {

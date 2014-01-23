@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,9 +46,7 @@ public class LockBasedLazyResolveStorageManager implements LazyResolveStorageMan
 
     @Override
     @NotNull
-    public <K, V> MemoizedFunctionToNotNull<K, V> createWeaklyRetainedMemoizedFunction(
-            @NotNull Function1<K, V> compute
-    ) {
+    public <K, V> MemoizedFunctionToNotNull<K, V> createWeaklyRetainedMemoizedFunction(@NotNull Function1<K, V> compute) {
         return storageManager.createMemoizedFunction(compute, new ConcurrentWeakValueHashMap<K, Object>());
     }
 

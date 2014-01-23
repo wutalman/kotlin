@@ -29,25 +29,17 @@ import org.jetbrains.jet.plugin.project.ResolveElementCache
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValue
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil
 
 class KotlinLightClassContextCache(val project: Project) {
     private val cacheKey = Key.create<CachedValue<ResolveElementCache>>("KOTLIN_LIGHT_CLASS_CONTEXT_CACHE")
 
     private val provider = object: CachedValueProvider<ResolveElementCache> {
         override fun compute(): CachedValueProvider.Result<ResolveElementCache> {
-            val trace = DelegatingBindingTrace(
-                    KotlinCacheManager.getInstance(project).getPossiblyIncompleteDeclarationsForLightClassGeneration().getBindingContext(),
-                    "Trace for KotlinLightClassContextCache"
-            )
             val resolveSession = AnalyzerFacadeForJVM.createLazyResolveSession(
                     project,
                     JetFilesProvider.getInstance(project)!!.allInScope(GlobalSearchScope.allScope(project)),
-                    trace,
-                    InjectorForJavaDescriptorResolverUtil.create(project, trace),
                     true
             )
             return Result.create(

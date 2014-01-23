@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
@@ -112,7 +111,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     public ResolveSession(
-            @NotNull Project project,
             @NotNull LazyResolveStorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,

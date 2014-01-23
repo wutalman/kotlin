@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver
 
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement
@@ -25,14 +24,23 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.TypeProjection
 import javax.inject.Inject
 import java.util.Collections
 import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver
+import com.intellij.openapi.diagnostic.Logger
 
 public class LazyResolveBasedCache() : JavaResolverCache {
     private var resolveSession by Delegates.notNull<ResolveSession>()
+
+    class object {
+        private val ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION = DescriptorResolverUtils.fqNameByClass(javaClass<AssertInvisibleInResolver>())
+        private val LOG = Logger.getInstance(javaClass<TraceBasedJavaResolverCache>())
+    }
+
 
     Inject
     public fun setSession(resolveSession: ResolveSession) {
@@ -61,7 +69,15 @@ public class LazyResolveBasedCache() : JavaResolverCache {
 
     override fun getClass(javaClass: JavaClass): ClassDescriptor? {
         val fqName = javaClass.getFqName()
-        return if (fqName != null) getClassResolvedFromSource(fqName) else null
+        if (fqName != null && KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME == fqName.parent()) {
+            if (javaClass.findAnnotation(ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION) != null) {
+                if (ApplicationManager.getApplication()!!.isInternal()) {
+                    LOG.error("Classpath is configured incorrectly:" + " class " + fqName + " from runtime must not be loaded by compiler")
+                }
+            }
+        }
+
+        return null
     }
 
     override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {
