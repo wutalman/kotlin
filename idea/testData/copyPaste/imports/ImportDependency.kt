@@ -4,7 +4,7 @@ import d.*
 import d.E.ENTRY
 import d.Outer.*
 
-<selection>fun f(a: A, t: T) = {
+<selection>fun f(a: A, t: T) {
     g(A(c).ext())
     O1.f()
     O2

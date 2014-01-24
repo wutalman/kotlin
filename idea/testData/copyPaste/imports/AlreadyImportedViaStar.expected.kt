@@ -1,5 +1,6 @@
-package a
+package to
 
+import a.*
 import a.E.ENTRY
 import a.Outer.Inner
 import a.Outer.Nested
