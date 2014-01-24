@@ -9,4 +9,16 @@ fun g(a: A) {}
 
 fun A.ext()
 
-fun f(a: A, t: T) = g(A(c).ext())</selection>
+object O1 {
+    fun f() {
+    }
+}
+
+object O2 {
+}
+
+fun f(a: A, t: T) = {
+    g(A(c).ext())
+    O1.f()
+    O2
+}</selection>
