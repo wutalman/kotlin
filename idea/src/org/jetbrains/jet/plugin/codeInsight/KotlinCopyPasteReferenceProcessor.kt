@@ -249,7 +249,6 @@ private fun PsiElement.isInPastedArea(filePastedInto: JetFile, bounds: RangeMark
 }
 
 private fun PsiElement.isInCopiedArea(fileCopiedFrom: JetFile, startOffsets: IntArray, endOffsets: IntArray): Boolean {
-    return false
     if (getContainingFile() != fileCopiedFrom) {
         return false
     }
