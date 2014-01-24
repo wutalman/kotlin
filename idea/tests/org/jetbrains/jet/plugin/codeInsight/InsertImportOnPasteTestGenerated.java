@@ -98,6 +98,16 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/ImportDependency.kt");
         }
         
+        @TestMetadata("ImportedElementCopied.kt")
+        public void testImportedElementCopied() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ImportedElementCopied.kt");
+        }
+        
+        @TestMetadata("Inner.kt")
+        public void testInner() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/Inner.kt");
+        }
+        
         @TestMetadata("Local.kt")
         public void testLocal() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/Local.kt");
@@ -204,6 +214,16 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("ImportDependency.kt")
         public void testImportDependency() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/ImportDependency.kt");
+        }
+        
+        @TestMetadata("ImportedElementCopied.kt")
+        public void testImportedElementCopied() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ImportedElementCopied.kt");
+        }
+        
+        @TestMetadata("Inner.kt")
+        public void testInner() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/Inner.kt");
         }
         
         @TestMetadata("Local.kt")

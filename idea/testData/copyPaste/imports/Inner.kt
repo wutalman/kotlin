@@ -1,26 +1,6 @@
-package d
+package a
 
-trait T
-
-class A(i: Int) {}
-
-val c = 0
-
-fun g(a: A) {}
-
-fun A.ext()
-
-object O1 {
-    fun f() {
-    }
-}
-
-object O2 {
-}
-
-enum class E {
-    ENTRY
-}
+import a.Outer.*
 
 class Outer {
     inner class Inner {
@@ -35,3 +15,6 @@ class Outer {
     }
     annotation class NestedAnnotation
 }
+
+<selection>fun f(i: Inner, n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, a: NestedAnnotation) {
+}</selection>

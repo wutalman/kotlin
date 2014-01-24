@@ -1,7 +1,5 @@
 package to
 
-import a.E.ENTRY
-
 trait T
 
 class A(i: Int) {}
@@ -20,13 +18,8 @@ object O1 {
 object O2 {
 }
 
-enum class E {
-    ENTRY
-}
-
 fun f(a: A, t: T) = {
     g(A(c).ext())
     O1.f()
     O2
-    ENTRY
 }

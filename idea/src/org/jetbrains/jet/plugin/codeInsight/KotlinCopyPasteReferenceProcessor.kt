@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassKind
+import com.intellij.openapi.util.TextRange
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData?> {
@@ -90,7 +91,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         for ((startOffset, endOffset) in zip(startOffsets, endOffsets)) {
             for (element in CollectHighlightsUtil.getElementsInRange(file, startOffset, endOffset)) {
                 val referencedElement = getReferencedElement(element)
-                if (referencedElement == null) {
+                //TODO: explain why do not include references to copied area
+                if (referencedElement == null || referencedElement.isInCopiedArea(file, startOffsets, endOffsets)) {
                     continue
                 }
                 val referencedDescriptor = session.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, referencedElement)
@@ -115,7 +117,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     private fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
         val isTopLevel = DescriptorUtils.isTopLevelDeclaration(this)
         val parentCanBeReferenced = getContainingDeclaration()?.canBeReferencedViaImport() ?: false
-        val isImportableInnerEntity = this is ClassDescriptor && getKind() == ClassKind.ENUM_ENTRY
+        val isImportableInnerEntity = this is ClassDescriptor && getKind() != ClassKind.CLASS_OBJECT
         return isTopLevel || (isImportableInnerEntity && parentCanBeReferenced)
     }
 
@@ -209,9 +211,6 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         val filePastedInto = expression.getContainingFile() as JetFile
         for (referencedExpression in referencedExpressions) {
             println("${referencedExpression.getText()} in ${referencedExpression.getContainingFile()?.getName()}")
-            if (referencedExpression.isInPastedArea(filePastedInto, bounds)) {
-                return
-            }
             val referencedFqName = referencedExpression.fqName
             if (referencedFqName == originalReferencedFqName) {
                 return
@@ -239,6 +238,8 @@ fun zip(first: IntArray, second: IntArray): Iterator<Pair<Int, Int>> {
     return first.iterator().zip(second.iterator())
 }
 
+//TODO: CHECK THAT IT MAKES SENSE NOW
+//TODO: remove
 private fun PsiElement.isInPastedArea(filePastedInto: JetFile, bounds: RangeMarker): Boolean {
     if (getContainingFile() != filePastedInto) {
         return false
@@ -246,6 +247,24 @@ private fun PsiElement.isInPastedArea(filePastedInto: JetFile, bounds: RangeMark
     val elementRange = getTextRange()!!
     return bounds.getStartOffset() <= elementRange.getStartOffset() && elementRange.getEndOffset() <= bounds.getEndOffset()
 }
+
+private fun PsiElement.isInCopiedArea(fileCopiedFrom: JetFile, startOffsets: IntArray, endOffsets: IntArray): Boolean {
+    return false
+    if (getContainingFile() != fileCopiedFrom) {
+        return false
+    }
+    val range = getTextRange()!!
+    for ((start, end) in zip(startOffsets, endOffsets)) {
+        //TODO: fix after KT-4463
+        if ((start..end).contains(range)) {
+            return true
+        }
+    }
+    return false
+}
+
+//TODO: check for text range utils elsewhere
+fun IntRange.contains(textRange: TextRange) = start <= textRange.getStartOffset() && textRange.getEndOffset() <= end
 
 private val PsiElement.fqName: FqName?
     get() {

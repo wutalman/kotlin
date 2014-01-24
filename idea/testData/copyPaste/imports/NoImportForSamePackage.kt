@@ -1,6 +1,7 @@
 package a
 
 import a.E.ENTRY
+import a.Outer.*
 
 trait T
 
@@ -24,9 +25,26 @@ enum class E {
     ENTRY
 }
 
+class Outer {
+    inner class Inner {
+    }
+    class Nested {
+    }
+    enum class NestedEnum {
+    }
+    object NestedObj {
+    }
+    trait NestedTrait {
+    }
+    annotation class NestedAnnotation
+}
+
 <selection>fun f(a: A, t: T) = {
     g(A(c).ext())
     O1.f()
     O2
     ENTRY
+}
+
+fun f2(i: Inner, n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, a: NestedAnnotation) {
 }</selection>
