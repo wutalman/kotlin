@@ -35,24 +35,31 @@ import com.intellij.openapi.diagnostic.Logger
 
 public class LazyResolveBasedCache() : JavaResolverCache {
     private var resolveSession by Delegates.notNull<ResolveSession>()
+    private var traceBasedCache = TraceBasedJavaResolverCache()
 
     class object {
         private val ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION = DescriptorResolverUtils.fqNameByClass(javaClass<AssertInvisibleInResolver>())
         private val LOG = Logger.getInstance(javaClass<TraceBasedJavaResolverCache>())
     }
 
-
     Inject
     public fun setSession(resolveSession: ResolveSession) {
         this.resolveSession = resolveSession
+        traceBasedCache.setTrace(this.resolveSession.getTrace())
     }
 
     override fun getClassResolvedFromSource(fqName: FqName): ClassDescriptor? {
+        val descriptor = traceBasedCache.getClassResolvedFromSource(fqName)
+        if (descriptor != null) return descriptor
+
         val classes = ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession, fqName)
         return if (classes.isNotEmpty()) classes.first() else null
     }
 
     override fun getMethod(method: JavaMethod): SimpleFunctionDescriptor? {
+        val descriptor = traceBasedCache.getMethod(method)
+        if (descriptor != null) return descriptor
+
         val classFqName = method.getContainingClass().getFqName()
         if (classFqName == null) return null
 
@@ -65,9 +72,12 @@ public class LazyResolveBasedCache() : JavaResolverCache {
         return if (functions.isNotEmpty()) (functions.first() as SimpleFunctionDescriptor) else null
     }
 
-    override fun getConstructor(constructor: JavaElement): ConstructorDescriptor? = null
+    override fun getConstructor(constructor: JavaElement): ConstructorDescriptor? = traceBasedCache.getConstructor(constructor)
 
     override fun getClass(javaClass: JavaClass): ClassDescriptor? {
+        val descriptor = traceBasedCache.getClass(javaClass)
+        if (descriptor != null) return descriptor
+
         val fqName = javaClass.getFqName()
         if (fqName != null && KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME == fqName.parent()) {
             if (javaClass.findAnnotation(ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION) != null) {
@@ -81,14 +91,17 @@ public class LazyResolveBasedCache() : JavaResolverCache {
     }
 
     override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {
+        traceBasedCache.recordMethod(method, descriptor)
     }
 
     override fun recordConstructor(element: JavaElement, descriptor: ConstructorDescriptor) {
+        traceBasedCache.recordConstructor(element, descriptor)
     }
 
     override fun recordField(field: JavaField, descriptor: PropertyDescriptor) {
+        traceBasedCache.recordField(field, descriptor)
     }
-
     override fun recordClass(javaClass: JavaClass, descriptor: ClassDescriptor) {
+        traceBasedCache.recordClass(javaClass, descriptor)
     }
 }
