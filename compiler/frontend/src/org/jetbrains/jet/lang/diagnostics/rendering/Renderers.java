@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -392,7 +393,11 @@ public class Renderers {
                     return arrow + bound.type + '(' + bound.position + ')';
                 }
             };
-            return typeBounds.getTypeVariable().getName() + " " + StringUtil.join(typeBounds.getBounds(), renderBound, ", ");
+            Name typeVariableName = typeBounds.getTypeVariable().getName();
+            if (typeBounds.isEmpty()) {
+                return typeVariableName.asString();
+            }
+            return typeVariableName + " " + StringUtil.join(typeBounds.getBounds(), renderBound, ", ");
         }
     };
 
