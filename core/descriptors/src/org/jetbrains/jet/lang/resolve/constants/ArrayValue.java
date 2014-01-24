@@ -30,7 +30,7 @@ public class ArrayValue extends CompileTimeConstant<List<CompileTimeConstant<?>>
 
     @KotlinSignature("fun ArrayValue(value: List<CompileTimeConstant<out Any?>?>, `type`: JetType, canBeUsedInAnnotations: Boolean)")
     public ArrayValue(@NotNull List<CompileTimeConstant<?>> value, @NotNull JetType type, boolean canBeUsedInAnnotations) {
-        super(value, canBeUsedInAnnotations);
+        super(value, canBeUsedInAnnotations, false);
         this.type = type;
     }
 
