@@ -17,3 +17,7 @@ object O1 {
 
 object O2 {
 }
+
+enum class E {
+    ENTRY
+}

@@ -47,6 +47,9 @@ import org.jetbrains.jet.lang.psi.JetNamed
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver.isFromBuiltIns
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassKind
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData?> {
@@ -96,8 +99,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
                 }
                 val fqNameUnsafe = DescriptorUtils.getFqName(referencedDescriptor)
                 //TODO: test and more precise condition
-                val canBeReferencedViaImport = DescriptorUtils.isTopLevelDeclaration(referencedDescriptor)
-                if (fqNameUnsafe.isSafe() && canBeReferencedViaImport) {
+                if (fqNameUnsafe.isSafe() && referencedDescriptor.canBeReferencedViaImport()) {
                     collectedData.add(createReferenceData(element, startOffset, fqNameUnsafe.toSafe()))
                 }
             }
@@ -108,6 +110,13 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         }
 
         return ReferenceTransferableData(collectedData.copyToArray())
+    }
+
+    private fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
+        val isTopLevel = DescriptorUtils.isTopLevelDeclaration(this)
+        val parentCanBeReferenced = getContainingDeclaration()?.canBeReferencedViaImport() ?: false
+        val isImportableInnerEntity = this is ClassDescriptor && getKind() == ClassKind.ENUM_ENTRY
+        return isTopLevel || (isImportableInnerEntity && parentCanBeReferenced)
     }
 
     private fun getReferencedElement(element: PsiElement): JetNamedDeclaration? {

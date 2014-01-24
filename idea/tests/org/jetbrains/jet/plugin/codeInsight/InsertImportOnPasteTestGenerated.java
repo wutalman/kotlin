@@ -58,6 +58,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/Constructor.kt");
         }
         
+        @TestMetadata("EnumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/EnumEntries.kt");
+        }
+        
         @TestMetadata("ExtensionAsInfixOrOperator.kt")
         public void testExtensionAsInfixOrOperator() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ExtensionAsInfixOrOperator.kt");
@@ -108,6 +113,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/NoImportForSamePackage.kt");
         }
         
+        @TestMetadata("Object.kt")
+        public void testObject() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/Object.kt");
+        }
+        
         @TestMetadata("ReferencedElementAlsoCopied.kt")
         public void testReferencedElementAlsoCopied() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ReferencedElementAlsoCopied.kt");
@@ -154,6 +164,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("Constructor.kt")
         public void testConstructor() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/Constructor.kt");
+        }
+        
+        @TestMetadata("EnumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/EnumEntries.kt");
         }
         
         @TestMetadata("ExtensionAsInfixOrOperator.kt")
@@ -204,6 +219,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("NoImportForSamePackage.kt")
         public void testNoImportForSamePackage() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/NoImportForSamePackage.kt");
+        }
+        
+        @TestMetadata("Object.kt")
+        public void testObject() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/Object.kt");
         }
         
         @TestMetadata("ReferencedElementAlsoCopied.kt")
