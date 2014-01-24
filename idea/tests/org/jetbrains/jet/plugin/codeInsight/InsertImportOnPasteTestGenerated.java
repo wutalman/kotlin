@@ -53,6 +53,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/ClassObject.kt");
         }
         
+        @TestMetadata("ClassObjectFunInsideClass.kt")
+        public void testClassObjectFunInsideClass() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ClassObjectFunInsideClass.kt");
+        }
+        
         @TestMetadata("ClassObjectInner.kt")
         public void testClassObjectInner() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ClassObjectInner.kt");
@@ -106,6 +111,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("ImportDependency.kt")
         public void testImportDependency() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ImportDependency.kt");
+        }
+        
+        @TestMetadata("ImportableEntityInExtensionLiteral.kt")
+        public void testImportableEntityInExtensionLiteral() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ImportableEntityInExtensionLiteral.kt");
         }
         
         @TestMetadata("ImportedElementCopied.kt")
@@ -181,6 +191,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCut("idea/testData/copyPaste/imports/ClassObject.kt");
         }
         
+        @TestMetadata("ClassObjectFunInsideClass.kt")
+        public void testClassObjectFunInsideClass() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ClassObjectFunInsideClass.kt");
+        }
+        
         @TestMetadata("ClassObjectInner.kt")
         public void testClassObjectInner() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/ClassObjectInner.kt");
@@ -234,6 +249,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("ImportDependency.kt")
         public void testImportDependency() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/ImportDependency.kt");
+        }
+        
+        @TestMetadata("ImportableEntityInExtensionLiteral.kt")
+        public void testImportableEntityInExtensionLiteral() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ImportableEntityInExtensionLiteral.kt");
         }
         
         @TestMetadata("ImportedElementCopied.kt")
