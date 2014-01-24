@@ -526,10 +526,24 @@
 
     <target name="runtime">
         <cleandir dir="${output}/classes/runtime"/>
+        <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            </classpath>
+            <arg value="-src"/>
+            <arg value="${basedir}/core/builtins/src${path.separator}${basedir}/core/runtime.jvm/src"/>
+            <arg value="-output"/>
+            <arg value="${output}/classes/runtime"/>
+            <arg value="-noStdlib"/>
+            <arg value="-classpath"/>
+            <arg value="${basedir}/core/builtins/src${path.separator}${basedir}/core/runtime.jvm/src"/>
+        </java>
+
         <javac2 destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" source="${java.target}" target="${java.target}">
-            <withKotlin/>
             <src path="${basedir}/core/builtins/src"/>
             <src path="${basedir}/core/runtime.jvm/src"/>
+            <classpath location="${output}/classes/runtime"/>
         </javac2>
 
         <cleandir dir="${output}/classes/stdlib"/>
