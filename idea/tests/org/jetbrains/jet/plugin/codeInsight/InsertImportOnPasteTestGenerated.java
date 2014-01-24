@@ -48,6 +48,16 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/ClassMember.kt");
         }
         
+        @TestMetadata("ClassObject.kt")
+        public void testClassObject() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ClassObject.kt");
+        }
+        
+        @TestMetadata("ClassObjectInner.kt")
+        public void testClassObjectInner() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ClassObjectInner.kt");
+        }
+        
         @TestMetadata("ClassType.kt")
         public void testClassType() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ClassType.kt");
@@ -164,6 +174,16 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("ClassMember.kt")
         public void testClassMember() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/ClassMember.kt");
+        }
+        
+        @TestMetadata("ClassObject.kt")
+        public void testClassObject() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ClassObject.kt");
+        }
+        
+        @TestMetadata("ClassObjectInner.kt")
+        public void testClassObjectInner() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ClassObjectInner.kt");
         }
         
         @TestMetadata("ClassType.kt")

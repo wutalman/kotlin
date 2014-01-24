@@ -117,7 +117,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     private fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
         val isTopLevel = DescriptorUtils.isTopLevelDeclaration(this)
         val parentCanBeReferenced = getContainingDeclaration()?.canBeReferencedViaImport() ?: false
-        val isImportableInnerEntity = this is ClassDescriptor && getKind() != ClassKind.CLASS_OBJECT
+        val isImportableInnerEntity = this is ClassDescriptor
         return isTopLevel || (isImportableInnerEntity && parentCanBeReferenced)
     }
 

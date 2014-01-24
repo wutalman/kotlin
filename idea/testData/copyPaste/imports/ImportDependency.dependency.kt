@@ -35,3 +35,8 @@ class Outer {
     }
     annotation class NestedAnnotation
 }
+
+class ClassObject {
+    class object {
+    }
+}

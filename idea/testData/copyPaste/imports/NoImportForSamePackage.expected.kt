@@ -16,4 +16,5 @@ fun f(a: A, t: T) = {
 }
 
 fun f2(i: Inner, n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, a: NestedAnnotation) {
+    ClassObject
 }

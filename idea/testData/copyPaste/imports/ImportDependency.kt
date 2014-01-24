@@ -12,4 +12,5 @@ import d.Outer.*
 }
 
 fun f2(i: Inner, n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, a: NestedAnnotation) {
+    ClassObject
 }</selection>

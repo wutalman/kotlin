@@ -39,6 +39,11 @@ class Outer {
     annotation class NestedAnnotation
 }
 
+class ClassObject {
+    class object {
+    }
+}
+
 <selection>fun f(a: A, t: T) = {
     g(A(c).ext())
     O1.f()
@@ -47,4 +52,5 @@ class Outer {
 }
 
 fun f2(i: Inner, n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, a: NestedAnnotation) {
+    ClassObject
 }</selection>

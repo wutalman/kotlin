@@ -14,6 +14,7 @@ import d.Outer.NestedEnum
 import d.Outer.NestedObj
 import d.Outer.NestedTrait
 import d.Outer.NestedAnnotation
+import d.ClassObject
 
 fun f(a: A, t: T) = {
     g(A(c).ext())
@@ -23,4 +24,5 @@ fun f(a: A, t: T) = {
 }
 
 fun f2(i: Inner, n: Nested, e: NestedEnum, o: NestedObj, t: NestedTrait, a: NestedAnnotation) {
+    ClassObject
 }
