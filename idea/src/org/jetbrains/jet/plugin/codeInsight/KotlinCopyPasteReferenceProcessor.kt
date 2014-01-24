@@ -51,6 +51,11 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import com.intellij.openapi.util.TextRange
+import java.util.Collections
+import org.jetbrains.jet.plugin.codeInsight.KotlinCopyPasteReferenceProcessor.ReferenceToRestoreData
+import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.psi.JetUserType
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData?> {
@@ -133,6 +138,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         return referencedElement as? JetNamedDeclaration
     }
 
+    data class ReferenceToRestoreData(
+            val expression: JetReferenceExpression,
+            val fqName: FqName,
+            val shouldLengthenReference: Boolean = false
+    )
+
     override fun processTransferableData (
             project: Project,
             editor: Editor,
@@ -155,68 +166,79 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         val refs = findReferencesToRestore(file, bounds, referenceData)
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         ApplicationManager.getApplication()!!.runWriteAction(Runnable {
-            restoreReferences(referenceData, refs, bounds)
+            restoreReferences(refs, file)
         })
     }
 
-    fun findReferencesToRestore(file: PsiFile, bounds: RangeMarker, referenceData: Array<out ReferenceData>): Array<JetReferenceExpression?> {
-        val result = arrayOfNulls<JetReferenceExpression>(referenceData.size)
+    fun findReferencesToRestore(file: PsiFile, bounds: RangeMarker, referenceData: Array<out ReferenceData>): List<ReferenceToRestoreData> {
         if (file !is JetFile) {
-            return result
+            return Collections.emptyList()
         }
-        for (i in referenceData.indices) {
-            val data = referenceData[i]
-            val startOffset = data.startOffset + bounds.getStartOffset()
-            val endOffset = data.endOffset + bounds.getStartOffset()
-            val element = file.findElementAt(startOffset)
-
-            //   if (element != null && element.getParent() is JetReferenceExpression) {
-            val referenceExpression = element!!.getParent() as JetReferenceExpression
-            val range = referenceExpression.getTextRange()!!
-            if (range.getStartOffset() == startOffset && range.getEndOffset() == endOffset) {
-                result[i] = referenceExpression
-            }
-            // }
-        }
-        return result
+        return referenceData.map {
+            findReferenceToRestore(it, file, bounds)
+        }.filterNotNull()
     }
 
-    fun restoreReferences(referenceData: Array<out ReferenceData>,
-                          refs: Array<out JetReferenceExpression?>,
-                          bounds: RangeMarker
-    ) {
-        for (i in referenceData.indices) {
-            val referenceExpression = refs[i]
-            if (referenceExpression == null) {
-                continue
-            }
-            val reference = referenceExpression.getReference() as? JetPsiReference
-            if (reference == null) {
-                //TODO: decide whether it is any difference to when reference expression is null
-                continue
-            }
-            //TODO: hide inside fun
-            val referencedExpressions = reference.multiResolve(/*this is ignored*/ true).map { it.getElement() }.filterNotNull()
-            restoreReference(referenceExpression, referencedExpressions, /*TODO: get rid of [i]*/referenceData[i].fqName, bounds)
+    private fun findReferenceToRestore(referenceData: ReferenceData, file: JetFile, bounds: RangeMarker): ReferenceToRestoreData? {
+        val referenceExpression = findReference(referenceData, file, bounds)
+        if (referenceExpression == null) {
+            return null
+        }
+        return createRestoreReferenceData(referenceExpression, referenceData.fqName)
+    }
+
+    private fun findReference(data: ReferenceData, file: JetFile, bounds: RangeMarker): JetReferenceExpression? {
+        val startOffset = data.startOffset + bounds.getStartOffset()
+        val endOffset = data.endOffset + bounds.getStartOffset()
+        val element = file.findElementAt(startOffset)
+        val referenceExpression = element!!.getParent() as JetReferenceExpression
+        val range = referenceExpression.getTextRange()!!
+        if (range.getStartOffset() == startOffset && range.getEndOffset() == endOffset) {
+            return referenceExpression
+        }
+        else {
+            return null
         }
     }
 
-    private fun restoreReference(
-            expression: JetReferenceExpression,
-            referencedExpressions: List<PsiElement>,
-            originalReferencedFqName: FqName,
-            bounds: RangeMarker
-    ) {
-        //TODO: expression used otherwise?
-        val filePastedInto = expression.getContainingFile() as JetFile
-        for (referencedExpression in referencedExpressions) {
-            println("${referencedExpression.getText()} in ${referencedExpression.getContainingFile()?.getName()}")
-            val referencedFqName = referencedExpression.fqName
-            if (referencedFqName == originalReferencedFqName) {
-                return
+    //TODO: rename
+    private fun createRestoreReferenceData(expression: JetReferenceExpression, originalReferencedFqName: FqName): ReferenceToRestoreData? {
+        val reference = expression.getReference() as? JetPsiReference
+        if (reference == null) {
+            //TODO: decide whether it is any difference to when reference expression is null
+            return null
+        }
+        //TODO: get rid of resolve
+        val referencedExpressions = reference.multiResolve(/*this is ignored*/ true).map { it.getElement() }.filterNotNull()
+        val referencedFqNames = referencedExpressions map { it.fqName }
+        val referencesSame = referencedFqNames any { it == originalReferencedFqName }
+        val referencesOther = referencedFqNames any { it != originalReferencedFqName }
+        when {
+            referencesSame && !referencesOther -> {
+                return null
+            }
+            !referencesSame && !referencesOther -> {
+                return ReferenceToRestoreData(expression, originalReferencedFqName)
+
+            }
+            referencesOther -> {
+                return ReferenceToRestoreData(expression, originalReferencedFqName, shouldLengthenReference = true)
             }
         }
-        ImportInsertHelper.addImportDirectiveIfNeeded(originalReferencedFqName, filePastedInto)
+        return null
+    }
+
+    fun restoreReferences(referencesToRestore: List<ReferenceToRestoreData>, file: JetFile) {
+        for ((referenceExpression, fqName, shouldLengthen) in referencesToRestore) {
+            if (!shouldLengthen) {
+                ImportInsertHelper.addImportDirectiveIfNeeded(fqName, file)
+            }
+            else {
+                val longReference = lengthenReference(referenceExpression, fqName)
+                PsiDocumentManager.getInstance(file.getProject()).commitAllDocuments()
+                ShortenReferences.process(file)
+            }
+        }
     }
 
     private fun createReferenceData(
@@ -236,16 +258,6 @@ val ReferenceData.fqName: FqName
 fun zip(first: IntArray, second: IntArray): Iterator<Pair<Int, Int>> {
     assert(first.size == second.size)
     return first.iterator().zip(second.iterator())
-}
-
-//TODO: CHECK THAT IT MAKES SENSE NOW
-//TODO: remove
-private fun PsiElement.isInPastedArea(filePastedInto: JetFile, bounds: RangeMarker): Boolean {
-    if (getContainingFile() != filePastedInto) {
-        return false
-    }
-    val elementRange = getTextRange()!!
-    return bounds.getStartOffset() <= elementRange.getStartOffset() && elementRange.getEndOffset() <= bounds.getEndOffset()
 }
 
 private fun PsiElement.isInCopiedArea(fileCopiedFrom: JetFile, startOffsets: IntArray, endOffsets: IntArray): Boolean {
@@ -275,3 +287,13 @@ private val PsiElement.fqName: FqName?
             null
         }
     }
+
+private fun lengthenReference(reference: JetReferenceExpression, fqName: FqName): JetElement? {
+    //TODO: can lengthen
+    val range = reference.getTextRange()!!
+    val file = reference.getContainingFile()!!
+    val project = reference.getProject()
+    PsiDocumentManager.getInstance(project).getDocument(file)!!.replaceString(range.getStartOffset(), range.getEndOffset(), fqName.asString())
+    return null
+    //return reference.getParent()?.replace(JetPsiFactory.createType(project, fqName.asString())) as? JetElement
+}

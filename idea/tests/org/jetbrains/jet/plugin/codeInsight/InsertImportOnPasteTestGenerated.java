@@ -68,9 +68,24 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/ClassObjectInner.kt");
         }
         
+        @TestMetadata("ClassResolvedToPackage.kt")
+        public void testClassResolvedToPackage() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ClassResolvedToPackage.kt");
+        }
+        
         @TestMetadata("ClassType.kt")
         public void testClassType() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ClassType.kt");
+        }
+        
+        @TestMetadata("ConflictWithClass.kt")
+        public void testConflictWithClass() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ConflictWithClass.kt");
+        }
+        
+        @TestMetadata("ConflictWithFun.kt")
+        public void testConflictWithFun() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/ConflictWithFun.kt");
         }
         
         @TestMetadata("Constructor.kt")
@@ -153,6 +168,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/Object.kt");
         }
         
+        @TestMetadata("PropertyResolvedToPackage.kt")
+        public void testPropertyResolvedToPackage() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/PropertyResolvedToPackage.kt");
+        }
+        
         @TestMetadata("ReferencedElementAlsoCopied.kt")
         public void testReferencedElementAlsoCopied() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/ReferencedElementAlsoCopied.kt");
@@ -211,9 +231,24 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCut("idea/testData/copyPaste/imports/ClassObjectInner.kt");
         }
         
+        @TestMetadata("ClassResolvedToPackage.kt")
+        public void testClassResolvedToPackage() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ClassResolvedToPackage.kt");
+        }
+        
         @TestMetadata("ClassType.kt")
         public void testClassType() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/ClassType.kt");
+        }
+        
+        @TestMetadata("ConflictWithClass.kt")
+        public void testConflictWithClass() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ConflictWithClass.kt");
+        }
+        
+        @TestMetadata("ConflictWithFun.kt")
+        public void testConflictWithFun() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/ConflictWithFun.kt");
         }
         
         @TestMetadata("Constructor.kt")
@@ -294,6 +329,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("Object.kt")
         public void testObject() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/Object.kt");
+        }
+        
+        @TestMetadata("PropertyResolvedToPackage.kt")
+        public void testPropertyResolvedToPackage() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/PropertyResolvedToPackage.kt");
         }
         
         @TestMetadata("ReferencedElementAlsoCopied.kt")

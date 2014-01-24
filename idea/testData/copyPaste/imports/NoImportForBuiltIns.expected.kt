@@ -1,6 +1,6 @@
 package to
 
-import a.a
+import a.d
 import a.b
 
-fun f(c: IntRange) = a + b
+fun f(c: IntRange) = d + b
